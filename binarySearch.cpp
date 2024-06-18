@@ -18,12 +18,12 @@ typedef struct {
     int n, max;
 } TDicionario;
 
-TDicionario *TDicionario_Inicia()
+TDicionario *TDicionario_Inicia(int n)
 {
     TDicionario *D;
     D = (TDicionario *) malloc(sizeof(TDicionario));
     D->n = 0;
-    D->max = 10;
+    D->max = n;
     D->Item = (TItem *) malloc(D->max * sizeof(TItem));
     return D;
 }
@@ -47,22 +47,22 @@ TApontador TDicionario_Pesquisa(TDicionario *D, TChave c)
     return TDicionario_Binaria(D, 0, D->n-1, c);
 }
 
-TApontador TDicionario_Pesquisa(TDicionario *D, TChave c)
-{
-    TApontador meio, esq, dir;
-    esq = 0;
-    dir = D->n-1;
-    while (esq <= dir) {
-        meio = (esq + dir) / 2;
-        if (c > D->Item[meio].Chave)
-            esq = meio + 1;
-        else if (c < D->Item[meio].Chave)
-            dir = meio - 1;
-        else
-            return meio;
-    }
-    return NIL;
-}
+// TApontador TDicionario_Pesquisa(TDicionario *D, TChave c)
+// {
+//     TApontador meio, esq, dir;
+//     esq = 0;
+//     dir = D->n-1;
+//     while (esq <= dir) {
+//         meio = (esq + dir) / 2;
+//         if (c > D->Item[meio].Chave)
+//             esq = meio + 1;
+//         else if (c < D->Item[meio].Chave)
+//             dir = meio - 1;
+//         else
+//             return meio;
+//     }
+//     return NIL;
+// }
 
 int TDicionario_Insere(TDicionario *D, TItem x)
 {
