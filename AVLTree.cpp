@@ -5,79 +5,90 @@
 
 #include "datasetGenerator.h"
 
-typedef int TChave;
+#include "AVLTree.h"
 
-typedef struct {
-    TChave Chave;
-} TItem;
+AVLTree::AVLTree() {}
 
-typedef struct SNo *TArvBin;
-
-typedef struct SNo {
-    TItem Item;
-    TArvBin Esq, Dir;
-    int fb;
-} TNo;
-
-int Altura(TArvBin No)
+int AVLTree::Altura(TArvBin No, int *counter_comparisons)
 {
     int hEsq, hDir;
+
+    (*counter_comparisons) ++;
     if (No == NULL)
         return -1;
-    hEsq = Altura(No->Esq);
-    hDir = Altura(No->Dir);
+
+    hEsq = Altura(No->Esq, counter_comparisons);
+    hDir = Altura(No->Dir, counter_comparisons);
+
+    (*counter_comparisons) ++;
     if (hEsq > hDir)
         return hEsq + 1;
     else
         return hDir + 1;
 }
 
-int FB(TArvBin No)
-{
+int AVLTree::FB(TArvBin No, int *counter_comparisons)
+{   
+    (*counter_comparisons) ++;
     if (No == NULL)
         return 0;
     return No->fb;
 }
 
-int ArvoreAVL(TArvBin No)
+int AVLTree::ArvoreAVL(TArvBin No, int *counter_comparisons)
 {
     int fb;
+
+    (*counter_comparisons) ++;
     if (No == NULL)
         return 1;
-    if (!ArvoreAVL(No->Esq))
+
+    (*counter_comparisons) ++;
+    if (!ArvoreAVL(No->Esq, counter_comparisons))
         return 0;
-    if (!ArvoreAVL(No->Dir))
+
+    (*counter_comparisons) ++;
+    if (!ArvoreAVL(No->Dir, counter_comparisons))
         return 0;
-    fb = FB(No);
+
+    fb = FB(No, counter_comparisons);
+
+    (*counter_comparisons) ++;
     if ((fb > 1) || (fb < -1))
         return 0;
     else
         return 1;
 }
 
-void LL(TArvBin *pA)
+void AVLTree::LL(TArvBin *pA, int *counter_comparisons)
 {
     TArvBin pB;
     pB = (*pA)->Esq;
     (*pA)->Esq = pB->Dir;
     pB->Dir = *pA;
+
+    (*counter_comparisons) ++;
     if (pB->fb == 0) { (*pA)->fb = +1; pB->fb = -1; }
     else { (*pA)->fb = 0; pB->fb = 0; }
+
     *pA = pB;
 }
 
-void RR(TArvBin *pA)
+void AVLTree::RR(TArvBin *pA, int *counter_comparisons)
 {
     TArvBin pB;
     pB = (*pA)->Dir;
     (*pA)->Dir = pB->Esq;
     pB->Esq = *pA;
+
+    (*counter_comparisons) ++;
     if (pB->fb == 0) { (*pA)->fb = -1; pB->fb = +1; }
     else { (*pA)->fb = 0; pB->fb = 0; }
+
     *pA = pB;
 }
 
-void LR(TArvBin *pA)
+void AVLTree::LR(TArvBin *pA, int *counter_comparisons)
 {
     TArvBin pB, pC;
     pB = (*pA)->Esq;
@@ -86,13 +97,18 @@ void LR(TArvBin *pA)
     pC->Esq = pB;
     (*pA)->Esq = pC->Dir;
     pC->Dir = *pA;
+
+    (*counter_comparisons) ++;
     if (pC->fb == +1) (*pA)->fb = -1; else (*pA)->fb = 0;
+
+    (*counter_comparisons) ++;
     if (pC->fb == -1) pB->fb = +1; else pB->fb = 0;
+
     pC->fb = 0;
     *pA = pC;
 }
 
-void RL(TArvBin *pA)
+void AVLTree::RL(TArvBin *pA, int *counter_comparisons)
 {
     TArvBin pB, pC;
     pB = (*pA)->Dir;
@@ -101,94 +117,142 @@ void RL(TArvBin *pA)
     pC->Dir = pB;
     (*pA)->Dir = pC->Esq;
     pC->Esq = *pA;
+
+    (*counter_comparisons) ++;
     if (pC->fb == -1) (*pA)->fb = +1; else (*pA)->fb = 0;
+
+    (*counter_comparisons) ++;
     if (pC->fb == +1) pB->fb = -1; else pB->fb = 0;
+
     pC->fb = 0;
     *pA = pC;
 }
 
-int BalancaEsquerda(TArvBin *pNo)
+int AVLTree::BalancaEsquerda(TArvBin *pNo, int *counter_comparisons)
 {
-    int fbe = FB((*pNo)->Esq);
+    int fbe = FB((*pNo)->Esq, counter_comparisons);
     if (fbe > 0) {
-        LL(pNo);
+        (*counter_comparisons) ++;
+
+        LL(pNo, counter_comparisons);
         return 1;
     }
     else if (fbe < 0) {
-        LR(pNo);
+        (*counter_comparisons) += 2;
+
+        LR(pNo, counter_comparisons);
         return 1;
     }
     else {
-        LL(pNo);
+        (*counter_comparisons) += 2;
+
+        LL(pNo, counter_comparisons);
         return 0;
     }
 }
 
-int BalancaDireita(TArvBin *pNo)
+int AVLTree::BalancaDireita(TArvBin *pNo, int *counter_comparisons)
 {
-    int fbd = FB((*pNo)->Dir);
+    int fbd = FB((*pNo)->Dir, counter_comparisons);
     if (fbd < 0) {
-        RR(pNo);
+        (*counter_comparisons) ++;
+
+        RR(pNo, counter_comparisons);
         return 1;
     }
     else if (fbd > 0) {
-        RL(pNo);
+        (*counter_comparisons) += 2;
+
+        RL(pNo, counter_comparisons);
         return 1;
     }
     else {
-        RR(pNo);
+        (*counter_comparisons) += 2;
+
+        RR(pNo, counter_comparisons);
         return 0;
     }
 }
 
-int BalancaNo(TArvBin *pNo)
+int AVLTree::BalancaNo(TArvBin *pNo, int *counter_comparisons)
 {
-    int fb = FB(*pNo);
-    if (fb > 1)
-        return BalancaEsquerda(pNo);
-    else if (fb < -1)
-        return BalancaDireita(pNo);
+    int fb = FB(*pNo, counter_comparisons);
+
+    if (fb > 1) {
+        (*counter_comparisons) ++;
+        return BalancaEsquerda(pNo, counter_comparisons);
+    }
+    else if (fb < -1) {
+        (*counter_comparisons) += 2;
+        return BalancaDireita(pNo, counter_comparisons);
+    }
+        
     return 0;
 }
 
-int Insere(TArvBin *pNo, TItem x)
+int AVLTree::Insere(TArvBin *pNo, TItem x, int *counter_comparisons)
 {
     if (*pNo == NULL) {
+        (*counter_comparisons) ++;
         *pNo = (TArvBin) malloc(sizeof(TNo));
         (*pNo)->Item = x; (*pNo)->Esq = NULL; (*pNo)->Dir = NULL; (*pNo)->fb = 0;
         return 1;
     }
     else if (x.Chave < (*pNo)->Item.Chave) {
-        if (Insere(&(*pNo)->Esq, x))
+        (*counter_comparisons) += 2;
+
+        (*counter_comparisons) ++;
+        if (Insere(&(*pNo)->Esq, x, counter_comparisons)) {
+
+            (*counter_comparisons) ++;
             switch ((*pNo)->fb) {
                 case -1: (*pNo)->fb = 0; return 0;
                 case 0: (*pNo)->fb = +1; return 1;
-                case +1: return !BalancaEsquerda(pNo);
+                case +1: return !BalancaEsquerda(pNo, counter_comparisons);
             }
+        }
+            
         return 0;
     }
     else if (x.Chave > (*pNo)->Item.Chave) {
-        if (Insere(&(*pNo)->Dir, x))
+        (*counter_comparisons) += 3;
+
+        (*counter_comparisons) ++;
+        if (Insere(&(*pNo)->Dir, x, counter_comparisons)) {
+
+            (*counter_comparisons) ++;
             switch ((*pNo)->fb) { 
                 case +1: (*pNo)->fb = 0; return 0;
                 case 0: (*pNo)->fb = -1; return 1;
-                case -1: return !BalancaDireita(pNo);
+                case -1: return !BalancaDireita(pNo, counter_comparisons);
             }
+        }
+            
         return 0;
     }
-    else
+    else {
+        (*counter_comparisons) += 3;
+
         return 0;
+    }
 }
 
-int Sucessor(TArvBin *q, TArvBin *r)
-{
+int AVLTree::Sucessor(TArvBin *q, TArvBin *r, int *counter_comparisons)
+{   
+    (*counter_comparisons) ++;
     if ((*r)->Esq != NULL) {
-        if (Sucessor(q, &(*r)->Esq))
+
+        (*counter_comparisons) ++;
+        if (Sucessor(q, &(*r)->Esq, counter_comparisons)) {
+
+            (*counter_comparisons) ++;
             switch ((*r)->fb) {
                 case +1: (*r)->fb = 0; return 1;
                 case 0: (*r)->fb = -1; return 0;
-                case -1: return BalancaDireita(r);
+                case -1: return BalancaDireita(r, counter_comparisons);
             }
+        }
+            
         return 0;
     }
     else {
@@ -199,79 +263,113 @@ int Sucessor(TArvBin *q, TArvBin *r)
     }
 }
 
-int Retira(TArvBin *p, TChave c)
+int AVLTree::Retira(TArvBin *p, TChave c, int *counter_comparisons)
 {
     TArvBin q; int ret;
-    if (*p == NULL)
+    if (*p == NULL) {
+        (*counter_comparisons) ++;
+
         return 0;
+    }
     else if (c < (*p)->Item.Chave) {
-        if (Retira(&(*p)->Esq, c))
+        (*counter_comparisons) += 2;
+
+        (*counter_comparisons) ++;
+        if (Retira(&(*p)->Esq, c, counter_comparisons)) {
+
+            (*counter_comparisons) ++;
             switch ((*p)->fb) {
                 case +1: (*p)->fb = 0; return 1;
                 case 0: (*p)->fb = -1; return 0;
-                case -1: return BalancaDireita(p);
+                case -1: return BalancaDireita(p, counter_comparisons);
             }
+        }            
         return 0;
     }
     else if (c > (*p)->Item.Chave) {
-        if (Retira(&(*p)->Dir, c))
+        (*counter_comparisons) += 3;
+
+        (*counter_comparisons) ++;
+        if (Retira(&(*p)->Dir, c, counter_comparisons)) {
+
+            (*counter_comparisons) ++;
             switch ((*p)->fb) {
                 case -1: (*p)->fb = 0; return 1;
                 case 0: (*p)->fb = +1; return 0;
-                case +1: return BalancaEsquerda(p);
+                case +1: return BalancaEsquerda(p, counter_comparisons);
             }
+        }
+
         return 0;
     }
     else {
+        (*counter_comparisons) += 3;
+
         q = *p;
-        if (q->Esq == NULL) { *p = q->Dir; ret = 1; }
-        else if (q->Dir == NULL) { *p = q->Esq; ret = 1; }
+        if (q->Esq == NULL) { 
+            (*counter_comparisons) ++;
+
+            *p = q->Dir; ret = 1; 
+        }
+        else if (q->Dir == NULL) { 
+            (*counter_comparisons) += 2;
+
+            *p = q->Esq; ret = 1; 
+        }
         else {
-            if (Sucessor(&q, &q->Dir))
-                switch ((*p)->fb) { // subarvore direita encolheu
+            (*counter_comparisons) += 2;
+
+            (*counter_comparisons) ++;
+            if (Sucessor(&q, &q->Dir, counter_comparisons)) {
+
+                (*counter_comparisons) ++;
+                switch ((*p)->fb) {
                     case -1: (*p)->fb = 0; ret = 1; break;
                     case 0: (*p)->fb = +1; ret = 0; break;
-                    case +1: ret = BalancaEsquerda(p); break;
+                    case +1: ret = BalancaEsquerda(p, counter_comparisons); break;
                 }
-            else ret = 0;
+            }
+            else {
+                ret = 0;
+            }
         }
         free(q);
         return ret;
     }
 }
 
-int main() {
-    TArvBin arvore = NULL;
-    TItem item;
+std::variant<TDicionario*, TArvBin*> AVLTree::testInsere(std::vector<int> dataset, int *counter_comparisons) {
 
-    // Inserir elementos na árvore
-    item.Chave = 10;
-    Insere(&arvore, item);
-    
-    item.Chave = 20;
-    Insere(&arvore, item);
-    
-    item.Chave = 5;
-    Insere(&arvore, item);
+    TArvBin* arvore = NULL;
 
-    // Verificar se a árvore é AVL
-    if (ArvoreAVL(arvore)) {
-        printf("A árvore é AVL\n");
-    } else {
-        printf("A árvore não é AVL\n");
+    for (int i = 0; i < dataset.size(); ++i) {
+        TItem item;
+        item.Chave = dataset[i];
+
+        Insere(arvore, item, counter_comparisons);
     }
 
-    // Remover um elemento
-    Retira(&arvore, 10);
+    return arvore;
+}
 
-    // Verificar novamente se a árvore é AVL
-    if (ArvoreAVL(arvore)) {
-        printf("A árvore é AVL\n");
-    } else {
-        printf("A árvore não é AVL\n");
+std::variant<TDicionario*, TArvBin*> AVLTree::testPesquisa(std::variant<TDicionario*, TArvBin*> dicionario, std::vector<int> dataset, int *counter_comparisons) {
+
+    return dicionario;
+}
+
+std::variant<TDicionario*, TArvBin*> AVLTree::testRetira(std::variant<TDicionario*, TArvBin*> dicionario, std::vector<int> dataset, int *counter_comparisons) {
+
+    if (std::holds_alternative<TArvBin*>(dicionario)) {
+
+        TArvBin* dic_ptr = std::get<TArvBin*>(dicionario);
+
+        for (int i = 0; i < dataset.size(); ++i) {
+
+            TChave chave = dataset[i];
+
+            Retira(dic_ptr, chave, counter_comparisons);
+        }
     }
 
-    std::cout << arvore->fb << " ";
-
-    return 0;
+    return dicionario;
 }

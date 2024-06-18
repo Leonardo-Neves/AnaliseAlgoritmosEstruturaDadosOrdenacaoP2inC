@@ -1,0 +1,17 @@
+Iteration;Algorithm;DatasetName;DatasetSize;Time Insere;Counter Comparisons Insere;Time Pesquisa;Counter Comparisons Pesquisa;Time Retira;Counter Comparisons Retira
+1;binarySearch;Ordered;10;0.083;80;0.001;45;0.001;101;
+1;binarySearch;Ordered;100;0.096;1446;0.005;1179;0.015;6308;
+1;binarySearch;Ordered;1000;0.111;20954;0.124;19912;1.75;522488;
+1;binarySearch;Ordered;10000;0.658;277234;1.882;281875;77.618;50325932;
+1;binarySearch;OrderedInverse;10;0.005;132;0.001;45;0;58;
+1;binarySearch;OrderedInverse;100;0.17;6690;0.006;1179;0.004;1160;
+1;binarySearch;OrderedInverse;1000;1.387;526461;0.07;19912;0.042;17974;
+1;binarySearch;OrderedInverse;10000;72.498;50365893;0.566;281875;0.388;247262;
+1;binarySearch;AlmostOrdered;10;0.003;84;0.001;45;0;95;
+1;binarySearch;AlmostOrdered;100;0.26;2073;0.005;1179;0.01;5615;
+1;binarySearch;AlmostOrdered;1000;0.479;85525;0.052;19912;0.581;457170;
+1;binarySearch;AlmostOrdered;10000;10.756;6593538;0.667;281875;56.536;44000619;
+1;binarySearch;Random;10;0.002;100;0.001;45;0.001;73;
+1;binarySearch;Random;100;0.017;4106;0.007;1179;0.081;3517;
+1;binarySearch;Random;1000;0.465;281423;0.064;19912;0.358;260684;
+1;binarySearch;Random;10000;36.211;25152998;0.855;281875;30.29;25433432;

@@ -1,24 +1,27 @@
 #include <stdio.h>
 #include <stdlib.h> 
 #include <iostream>
+#include <typeinfo>
 #define NIL 0
 
-#include "datasetGenerator.h"
+#include "linearSearch.h"
 
-typedef int TChave;
+// typedef int TChave;
 
-typedef struct {
-    TChave Chave;
-} TItem;
+// typedef struct {
+//     TChave Chave;
+// } TItem;
 
-typedef int TApontador;
+// typedef int TApontador;
 
-typedef struct {
-    TItem *Item;
-    int n, max;
-} TDicionario;
+// typedef struct {
+//     TItem *Item;
+//     int n, max;
+// } TDicionario;
 
-TDicionario *TDicionario_Inicia(int n)
+LinearSearch::LinearSearch() {}
+
+TDicionario *LinearSearch::TDicionario_Inicia(int n, int *counter_comparisons)
 {
     TDicionario *D;
     D = (TDicionario *) malloc(sizeof(TDicionario));
@@ -28,19 +31,25 @@ TDicionario *TDicionario_Inicia(int n)
     return D;
 }
 
-TApontador TDicionario_Pesquisa(TDicionario *D, TChave c)
+TApontador LinearSearch::TDicionario_Pesquisa(TDicionario *D, TChave c, int *counter_comparisons)
 {
     TApontador i;
     for (i = 0; i < D->n; i++)
+        (*counter_comparisons) ++;
+
+        (*counter_comparisons) ++;
         if (D->Item[i].Chave == c)
             return i;
     return NIL;
 }
 
-int TDicionario_Insere(TDicionario *D, TItem x)
-{
-    if (TDicionario_Pesquisa(D, x.Chave) != NIL)
+int LinearSearch::TDicionario_Insere(TDicionario *D, TItem x, int *counter_comparisons)
+{   
+    (*counter_comparisons) ++;
+    if (TDicionario_Pesquisa(D, x.Chave, counter_comparisons) != NIL)
         return 0;
+
+    (*counter_comparisons) ++;
     if (D->n == D->max) {
         D->max *= 2;
         D->Item = (TItem *) realloc(D->Item, D->max * sizeof(TItem));
@@ -49,13 +58,17 @@ int TDicionario_Insere(TDicionario *D, TItem x)
     return 1;
 }
 
-int TDicionario_Retira(TDicionario *D, TChave c)
+int LinearSearch::TDicionario_Retira(TDicionario *D, TChave c, int *counter_comparisons)
 {
     TApontador i;
-    i = TDicionario_Pesquisa(D, c);
+    i = TDicionario_Pesquisa(D, c, counter_comparisons);
+
+    (*counter_comparisons) ++;
     if (i == NIL)
         return 0;
     D->Item[i] = D->Item[--D->n];
+
+    (*counter_comparisons) ++;
     if (4 * D->n == D->max) {
         D->max /= 2;
         D->Item = (TItem *) realloc(D->Item, D->max * sizeof(TItem));
@@ -63,25 +76,48 @@ int TDicionario_Retira(TDicionario *D, TChave c)
     return 1;
 }
 
-int main() {
-    int n = 10;
+std::variant<TDicionario*, TArvBin*> LinearSearch::testInsere(std::vector<int> dataset, int *counter_comparisons) {
 
-    auto dicionario = TDicionario_Inicia(n);
+    auto dicionario = TDicionario_Inicia(dataset.size(), counter_comparisons);
 
-    DatasetGenerator datasetGenerator;
+    for (int i = 0; i < dataset.size(); ++i) {
 
-    std::vector<int> dataset = datasetGenerator.generateOrderedInverse(n);
-
-    for (int i = 0; i < n; ++i) {
         TItem item;
         item.Chave = dataset[i];
 
-        TDicionario_Insere(dicionario, item);
+        TDicionario_Insere(dicionario, item, counter_comparisons);
     }
 
-    TChave chave = 8;
+    return dicionario;
+}
 
-    std::cout << TDicionario_Pesquisa(dicionario, chave) << " ";
+std::variant<TDicionario*, TArvBin*> LinearSearch::testPesquisa(std::variant<TDicionario*, TArvBin*> dicionario, std::vector<int> dataset, int *counter_comparisons) {
 
-    return 0;
+    if (std::holds_alternative<TDicionario*>(dicionario)) {
+        TDicionario* dic_ptr = std::get<TDicionario*>(dicionario);
+
+        for (int i = 0; i < dataset.size(); ++i) {
+            TChave chave = dataset[i];
+            TDicionario_Pesquisa(dic_ptr, chave, counter_comparisons);
+        }
+    }
+
+    return dicionario;
+}
+
+std::variant<TDicionario*, TArvBin*> LinearSearch::testRetira(std::variant<TDicionario*, TArvBin*> dicionario, std::vector<int> dataset, int *counter_comparisons) {
+
+    if (std::holds_alternative<TDicionario*>(dicionario)) {
+
+        TDicionario* dic_ptr = std::get<TDicionario*>(dicionario);
+
+        for (int i = 0; i < dataset.size(); ++i) {
+
+            TChave chave = dataset[i];
+
+            TDicionario_Retira(dic_ptr, chave, counter_comparisons);
+        }
+    }
+
+    return dicionario;
 }

@@ -48,6 +48,15 @@
         "xlocmon": "cpp",
         "xlocnum": "cpp",
         "xloctime": "cpp",
-        "xstring": "cpp"
+        "xstring": "cpp",
+        "algorithm": "cpp",
+        "list": "cpp",
+        "numeric": "cpp",
+        "optional": "cpp",
+        "random": "cpp",
+        "unordered_set": "cpp",
+        "xhash": "cpp",
+        "variant": "cpp",
+        "mutex": "cpp"
     }
 }

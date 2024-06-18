@@ -5,20 +5,11 @@
 
 #include "datasetGenerator.h"
 
-typedef int TChave;
+#include "binarySearch.h"
 
-typedef struct {
-    TChave Chave;
-} TItem;
+BinarySearch::BinarySearch() {}
 
-typedef int TApontador;
-
-typedef struct {
-    TItem *Item;
-    int n, max;
-} TDicionario;
-
-TDicionario *TDicionario_Inicia(int n)
+TDicionario *BinarySearch::TDicionario_Inicia(int n, int *counter_comparisons)
 {
     TDicionario *D;
     D = (TDicionario *) malloc(sizeof(TDicionario));
@@ -28,72 +19,79 @@ TDicionario *TDicionario_Inicia(int n)
     return D;
 }
 
-TApontador TDicionario_Binaria(TDicionario *D, TApontador esq, TApontador dir, TChave c)
+TApontador BinarySearch::TDicionario_Binaria(TDicionario *D, TApontador esq, TApontador dir, TChave c, int *counter_comparisons)
 {
     TApontador meio;
     meio = (esq + dir) / 2;
-    if (esq > dir)
+
+    
+    if (esq > dir) {
+        (*counter_comparisons) ++;
         return NIL;
-    else if (c > D->Item[meio].Chave)
-        return TDicionario_Binaria(D, meio+1, dir, c);
-    else if (c < D->Item[meio].Chave)
-        return TDicionario_Binaria(D, esq, meio-1, c);
+    }
+    else if (c > D->Item[meio].Chave) {
+        (*counter_comparisons) += 2;
+        return TDicionario_Binaria(D, meio+1, dir, c, counter_comparisons);
+    }   
+    else if (c < D->Item[meio].Chave) {
+        (*counter_comparisons) += 3;
+        return TDicionario_Binaria(D, esq, meio-1, c, counter_comparisons);
+    }
     else
         return meio;
 }
 
-TApontador TDicionario_Pesquisa(TDicionario *D, TChave c)
+TApontador BinarySearch::TDicionario_Pesquisa(TDicionario *D, TChave c, int *counter_comparisons)
 {
-    return TDicionario_Binaria(D, 0, D->n-1, c);
+    return TDicionario_Binaria(D, 0, D->n-1, c, counter_comparisons);
 }
 
-// TApontador TDicionario_Pesquisa(TDicionario *D, TChave c)
-// {
-//     TApontador meio, esq, dir;
-//     esq = 0;
-//     dir = D->n-1;
-//     while (esq <= dir) {
-//         meio = (esq + dir) / 2;
-//         if (c > D->Item[meio].Chave)
-//             esq = meio + 1;
-//         else if (c < D->Item[meio].Chave)
-//             dir = meio - 1;
-//         else
-//             return meio;
-//     }
-//     return NIL;
-// }
-
-int TDicionario_Insere(TDicionario *D, TItem x)
+int BinarySearch::TDicionario_Insere(TDicionario *D, TItem x, int *counter_comparisons)
 {
     TApontador i;
-    if (TDicionario_Pesquisa(D, x.Chave) != NIL)
+
+    (*counter_comparisons) ++;
+    if (TDicionario_Pesquisa(D, x.Chave, counter_comparisons) != NIL)
         return 0;
+
+    (*counter_comparisons) ++;
     if (D->n == D->max) {
         D->max *= 2;
         D->Item = (TItem *) realloc(D->Item, D->max * sizeof(TItem));
     }
+
     i = D->n - 1;
+
     while ((i >= 0) && (x.Chave < D->Item[i].Chave)) {
+        (*counter_comparisons) ++;
+
         D->Item[i + 1] = D->Item[i];
         i--;
     }
+
     D->Item[i + 1] = x;
     D->n++;
+
     return 1;
 }
 
-int TDicionario_Retira(TDicionario *D, TChave c)
+int BinarySearch::TDicionario_Retira(TDicionario *D, TChave c, int *counter_comparisons)
 {
     TApontador i;
-    i = TDicionario_Pesquisa(D, c);
+    i = TDicionario_Pesquisa(D, c, counter_comparisons);
+
+    (*counter_comparisons) ++;
     if (i == NIL)
         return 0;
+
     while (i < D->n - 1) {
+        (*counter_comparisons) ++;
         D->Item[i] = D->Item[i + 1];
         i++;
     }
     D->n--;
+
+    (*counter_comparisons) ++;
     if (4 * D->n == D->max) {
         D->max /= 2;
         D->Item = (TItem *) realloc(D->Item, D->max * sizeof(TItem));
@@ -101,25 +99,65 @@ int TDicionario_Retira(TDicionario *D, TChave c)
     return 1;
 }
 
-int main() {
-    int n = 10;
+// void main() {
+//     int n = 10;
 
-    auto dicionario = TDicionario_Inicia(n);
+//     auto dicionario = TDicionario_Inicia(n);
 
-    DatasetGenerator datasetGenerator;
+//     DatasetGenerator datasetGenerator;
 
-    std::vector<int> dataset = datasetGenerator.generateOrderedInverse(n);
+//     std::vector<int> dataset = datasetGenerator.generateOrderedInverse(n);
 
-    for (int i = 0; i < n; ++i) {
+//     for (int i = 0; i < n; ++i) {
+//         TItem item;
+//         item.Chave = dataset[i];
+
+//         TDicionario_Insere(dicionario, item);
+//     }
+// }
+
+std::variant<TDicionario*, TArvBin*> BinarySearch::testInsere(std::vector<int> dataset, int *counter_comparisons) {
+
+    auto dicionario = TDicionario_Inicia(dataset.size(), counter_comparisons);
+
+    for (int i = 0; i < dataset.size(); ++i) {
+
         TItem item;
         item.Chave = dataset[i];
 
-        TDicionario_Insere(dicionario, item);
+        TDicionario_Insere(dicionario, item, counter_comparisons);
     }
 
-    TChave chave = 8;
+    return dicionario;
+}
 
-    std::cout << TDicionario_Pesquisa(dicionario, chave) << " ";
+std::variant<TDicionario*, TArvBin*> BinarySearch::testPesquisa(std::variant<TDicionario*, TArvBin*> dicionario, std::vector<int> dataset, int *counter_comparisons) {
 
-    return 0;
+    if (std::holds_alternative<TDicionario*>(dicionario)) {
+        TDicionario* dic_ptr = std::get<TDicionario*>(dicionario);
+
+        for (int i = 0; i < dataset.size(); ++i) {
+            TChave chave = dataset[i];
+            TDicionario_Pesquisa(dic_ptr, chave, counter_comparisons);
+        }
+    }
+
+    return dicionario;
+}
+
+std::variant<TDicionario*, TArvBin*> BinarySearch::testRetira(std::variant<TDicionario*, TArvBin*> dicionario, std::vector<int> dataset, int *counter_comparisons) {
+
+    if (std::holds_alternative<TDicionario*>(dicionario)) {
+
+        TDicionario* dic_ptr = std::get<TDicionario*>(dicionario);
+
+        for (int i = 0; i < dataset.size(); ++i) {
+
+            TChave chave = dataset[i];
+
+            TDicionario_Retira(dic_ptr, chave, counter_comparisons);
+        }
+    }
+
+    return dicionario;
 }
