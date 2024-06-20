@@ -57,6 +57,19 @@
         "unordered_set": "cpp",
         "xhash": "cpp",
         "variant": "cpp",
-        "mutex": "cpp"
+        "mutex": "cpp",
+        "chrono": "cpp",
+        "forward_list": "cpp",
+        "fstream": "cpp",
+        "functional": "cpp",
+        "iomanip": "cpp",
+        "map": "cpp",
+        "ratio": "cpp",
+        "sstream": "cpp",
+        "stop_token": "cpp",
+        "string": "cpp",
+        "thread": "cpp",
+        "unordered_map": "cpp",
+        "xtree": "cpp"
     }
 }

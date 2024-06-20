@@ -22,6 +22,7 @@ public:
     int Insere(TArvBin *pNo, TItem x, int *counter_comparisons);
     int Sucessor(TArvBin *q, TArvBin *r, int *counter_comparisons);
     int Retira(TArvBin *p, TChave c, int *counter_comparisons);
+    TArvBin* Pesquisa(TArvBin *No, TChave c, int *counter_comparisons);
     
     std::variant<TDicionario*, TArvBin*> testInsere(std::vector<int> dataset, int *counter_comparisons) override;
     std::variant<TDicionario*, TArvBin*> testPesquisa(std::variant<TDicionario*, TArvBin*> dicionario, std::vector<int> dataset, int *counter_comparisons) override;

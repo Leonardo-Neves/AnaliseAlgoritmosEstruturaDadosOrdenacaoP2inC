@@ -338,21 +338,74 @@ int AVLTree::Retira(TArvBin *p, TChave c, int *counter_comparisons)
     }
 }
 
+TArvBin* AVLTree::Pesquisa(TArvBin *No, TChave c, int *counter_comparisons)
+{
+    if (No == NULL) {
+        (*counter_comparisons) ++;
+
+        return NULL;
+    }
+    else if (c < (*No)->Item.Chave) {
+        (*counter_comparisons) += 2;
+
+        return Pesquisa(No->Esq, c, counter_comparisons);
+    }
+    else if (c > (*No)->Item.Chave) {
+        (*counter_comparisons) += 3;
+
+        return Pesquisa(No->Dir, c, counter_comparisons);
+    }
+    else {
+        (*counter_comparisons) += 3;
+
+        return No;
+    }
+        
+}
+
 std::variant<TDicionario*, TArvBin*> AVLTree::testInsere(std::vector<int> dataset, int *counter_comparisons) {
 
     TArvBin* arvore = NULL;
+
+    int sum = 0;
 
     for (int i = 0; i < dataset.size(); ++i) {
         TItem item;
         item.Chave = dataset[i];
 
-        Insere(arvore, item, counter_comparisons);
+        int counter_comparisons_insertion = 0;
+
+        Insere(arvore, item, &counter_comparisons_insertion);
+
+        sum += counter_comparisons_insertion;
     }
+
+    (*counter_comparisons) = sum / dataset.size();
 
     return arvore;
 }
 
 std::variant<TDicionario*, TArvBin*> AVLTree::testPesquisa(std::variant<TDicionario*, TArvBin*> dicionario, std::vector<int> dataset, int *counter_comparisons) {
+
+    if (std::holds_alternative<TArvBin*>(dicionario)) {
+
+        TArvBin* dic_ptr = std::get<TArvBin*>(dicionario);
+
+        int sum = 0;
+
+        for (int i = 0; i < dataset.size(); ++i) {
+
+            int counter_comparisons_retira = 0;
+
+            TChave chave = dataset[i];
+
+            Pesquisa(dic_ptr, chave, &counter_comparisons_retira);
+
+            sum += counter_comparisons_retira;
+        }
+
+        (*counter_comparisons) = sum / dataset.size();
+    }
 
     return dicionario;
 }
@@ -363,12 +416,20 @@ std::variant<TDicionario*, TArvBin*> AVLTree::testRetira(std::variant<TDicionari
 
         TArvBin* dic_ptr = std::get<TArvBin*>(dicionario);
 
+        int sum = 0;
+
         for (int i = 0; i < dataset.size(); ++i) {
+
+            int counter_comparisons_retira = 0;
 
             TChave chave = dataset[i];
 
-            Retira(dic_ptr, chave, counter_comparisons);
+            Retira(dic_ptr, chave, &counter_comparisons_retira);
+
+            sum += counter_comparisons_retira;
         }
+
+        (*counter_comparisons) = sum / dataset.size();
     }
 
     return dicionario;

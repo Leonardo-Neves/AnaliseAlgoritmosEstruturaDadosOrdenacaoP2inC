@@ -176,10 +176,10 @@ int main()
 
     // Configuração dos métodos que será utilizado em cada interação
     std::map<std::string, SearchAlgorithm*> methods;
-    methods["linearSearch"] = new LinearSearch();
-    methods["binarySearch"] = new BinarySearch();
-    methods["binarySearchTree"] = new BinarySearchTree();
-    // methods["binarySearchTree"] = new AVLTree();
+    // methods["linearSearch"] = new LinearSearch();
+    // methods["binarySearch"] = new BinarySearch();
+    // methods["binarySearchTree"] = new BinarySearchTree();
+    methods["binarySearchTree"] = new AVLTree();
 
     // Nome dos conjuntos de dados, informação que será utilizada posteriormente como identificador no arquivo CSV de resultado
     std::vector<std::string> datasets_name = {

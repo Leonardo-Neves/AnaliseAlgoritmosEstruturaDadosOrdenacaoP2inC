@@ -29,7 +29,7 @@ typedef struct {
 class SearchAlgorithm {
 public:
     virtual ~SearchAlgorithm() {} 
-    virtual std::variant<TDicionario*, TArvBin*>  testInsere(std::vector<int> dataset, int *counter_comparisons) = 0;
+    virtual std::variant<TDicionario*, TArvBin*> testInsere(std::vector<int> dataset, int *counter_comparisons) = 0;
     virtual std::variant<TDicionario*, TArvBin*> testPesquisa(std::variant<TDicionario*, TArvBin*> dicionario, std::vector<int> dataset, int *counter_comparisons) = 0;
     virtual std::variant<TDicionario*, TArvBin*> testRetira(std::variant<TDicionario*, TArvBin*> dicionario, std::vector<int> dataset, int *counter_comparisons) = 0;
 };
