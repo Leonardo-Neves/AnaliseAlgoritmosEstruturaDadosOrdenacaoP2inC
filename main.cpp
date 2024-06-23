@@ -19,6 +19,7 @@
 #include "binarySearch.h"
 #include "binarySearchTree.h"
 #include "AVLTree.h"
+#include "redBlackTree.h"
 
 #include "datasetGenerator.h"
 
@@ -179,7 +180,8 @@ int main()
     // methods["linearSearch"] = new LinearSearch();
     // methods["binarySearch"] = new BinarySearch();
     // methods["binarySearchTree"] = new BinarySearchTree();
-    methods["binarySearchTree"] = new AVLTree();
+    // methods["avlTree"] = new AVLTree();
+    methods["redBlackTree"] = new RedBlackTree();
 
     // Nome dos conjuntos de dados, informação que será utilizada posteriormente como identificador no arquivo CSV de resultado
     std::vector<std::string> datasets_name = {

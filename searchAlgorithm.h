@@ -18,6 +18,7 @@ typedef struct SNo {
     TItem Item;
     TArvBin Esq, Dir;
     int fb;
+    int cor;
 } TNo;
 
 typedef struct {

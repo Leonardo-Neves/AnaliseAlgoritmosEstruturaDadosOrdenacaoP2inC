@@ -5,71 +5,79 @@
 
 #include "datasetGenerator.h"
 
-typedef int TChave;
+#include "redBlackTree.h"
 
-typedef struct {
-    TChave Chave;
-} TItem;
+RedBlackTree::RedBlackTree() {}
 
-typedef struct SNo *TArvBin;
-
-typedef struct SNo {
-    TItem Item;
-    TArvBin Esq, Dir;
-    int cor; 
-} TNo;
-
-int EhNegro(TArvBin No)
-{
+int RedBlackTree::EhNegro(TArvBin No, int *counter_comparisons)
+{   
+    (*counter_comparisons) ++;
     return (No == NULL) || (No->cor == 0);
 }
 
-int EhRubro(TArvBin No)
-{
+int RedBlackTree::EhRubro(TArvBin No, int *counter_comparisons)
+{   
+    (*counter_comparisons) ++;
     return (No != NULL) && (No->cor == 1);
 }
 
-int AlturaNegra(TArvBin No)
+int RedBlackTree::AlturaNegra(TArvBin No, int *counter_comparisons)
 {
     int hEsq, hDir;
+
+    (*counter_comparisons) ++;
     if (No == NULL)
         return 0;
-    hEsq = AlturaNegra(No->Esq);
-    hDir = AlturaNegra(No->Dir);
+
+    hEsq = AlturaNegra(No->Esq, counter_comparisons);
+    hDir = AlturaNegra(No->Dir, counter_comparisons);
+
+    (*counter_comparisons) ++;
     if (hEsq > hDir)
-        return hEsq + EhNegro(No);
+        return hEsq + EhNegro(No, counter_comparisons);
     else
-        return hDir + EhNegro(No);
+        return hDir + EhNegro(No, counter_comparisons);
 }
 
-int ArvoreARN(TArvBin No)
-{
+int RedBlackTree::ArvoreARN(TArvBin No, int *counter_comparisons)
+{   
+    (*counter_comparisons) ++;
     if (No == NULL)
         return 1;
-    if (!ArvoreARN(No->Esq))
+
+    (*counter_comparisons) ++;
+    if (!ArvoreARN(No->Esq, counter_comparisons))
         return 0;
-    if (!ArvoreARN(No->Dir))
+    
+    (*counter_comparisons) ++;
+    if (!ArvoreARN(No->Dir, counter_comparisons))
         return 0;
-    if (EhRubro(No) && (!EhNegro(No->Esq) || !EhNegro(No->Dir)))
+
+    (*counter_comparisons) ++;
+    if (EhRubro(No, counter_comparisons) && (!EhNegro(No->Esq, counter_comparisons) || !EhNegro(No->Dir, counter_comparisons)))
         return 0;
-    if (AlturaNegra(No->Esq) != AlturaNegra(No->Dir))
+
+    (*counter_comparisons) ++;
+    if (AlturaNegra(No->Esq, counter_comparisons) != AlturaNegra(No->Dir, counter_comparisons))
         return 0;
+
     return 1;
 }
 
-void InverteCor(TArvBin No)
-{
+void RedBlackTree::InverteCor(TArvBin No, int *counter_comparisons)
+{   
+    (*counter_comparisons) ++;
     if (No != NULL) No->cor = !No->cor;
 }
 
-void TrocaCores(TArvBin No)
+void RedBlackTree::TrocaCores(TArvBin No, int *counter_comparisons)
 {
-    InverteCor(No);
-    InverteCor(No->Esq);
-    InverteCor(No->Dir);
+    InverteCor(No, counter_comparisons);
+    InverteCor(No->Esq, counter_comparisons);
+    InverteCor(No->Dir, counter_comparisons);
 }
 
-void RotacaoDireita(TArvBin *pA)
+void RedBlackTree::RotacaoDireita(TArvBin *pA, int *counter_comparisons)
 {
     TArvBin pB;
     pB = (*pA)->Esq;
@@ -78,7 +86,7 @@ void RotacaoDireita(TArvBin *pA)
     *pA = pB;
 }
 
-void RotacaoEsquerda(TArvBin *pA)
+void RedBlackTree::RotacaoEsquerda(TArvBin *pA, int *counter_comparisons)
 {
     TArvBin pB;
     pB = (*pA)->Dir;
@@ -87,30 +95,88 @@ void RotacaoEsquerda(TArvBin *pA)
     *pA = pB;
 }
 
-int BalancaEsquerda(TArvBin *pC)
+void RedBlackTree::BalancaDireitaInsere(TArvBin *pA, TArvBin *pB, TArvBin *pC, int *counter_comparisons)
+{   
+    (*counter_comparisons) ++;
+    if (EhRubro((*pC)->Esq, counter_comparisons)) { // caso 1
+        TrocaCores(*pC, counter_comparisons);
+    } else {
+        (*counter_comparisons) ++;
+        if (*pB == (*pA)->Esq) { // caso 2b
+            RotacaoDireita(pA, counter_comparisons);
+        }
+
+        InverteCor(*pA, counter_comparisons);
+        InverteCor(*pC, counter_comparisons); // caso 3b
+        RotacaoEsquerda(pC, counter_comparisons);  
+    }
+}
+
+void RedBlackTree::BalancaEsquerdaInsere(TArvBin *pA, TArvBin *pB, TArvBin *pC, int *counter_comparisons)
+{   
+    (*counter_comparisons) ++;
+    if (EhRubro((*pC)->Dir, counter_comparisons)) { // caso 1
+        TrocaCores(*pC, counter_comparisons);
+    } else {
+        (*counter_comparisons) ++;
+        if (*pB == (*pA)->Dir) { // caso 2a
+            RotacaoEsquerda(pA, counter_comparisons);
+        }
+
+        InverteCor(*pA, counter_comparisons);
+        InverteCor(*pC, counter_comparisons); // caso 3a
+        RotacaoDireita(pC, counter_comparisons);
+        
+    }
+}
+
+void RedBlackTree::BalancaNoInsere(TArvBin *pA, TArvBin *pB, TArvBin *pC, int *counter_comparisons)
+{   
+    (*counter_comparisons) ++;
+    if ((pC != NULL) && EhRubro(*pA, counter_comparisons) && EhRubro(*pB, counter_comparisons)) {
+        (*counter_comparisons) ++;
+        if (*pA == (*pC)->Esq)
+            BalancaEsquerdaInsere(pA, pB, pC, counter_comparisons);
+        else
+            BalancaDireitaInsere(pA, pB, pC, counter_comparisons);
+    }
+}
+
+int RedBlackTree::BalancaEsquerda(TArvBin *pC, int *counter_comparisons)
 {
     TArvBin pD = (*pC)->Esq;
-    if (EhRubro(pD)) {
-        RotacaoDireita(pC);
+
+    (*counter_comparisons) ++;
+    if (EhRubro(pD, counter_comparisons)) {
+        RotacaoDireita(pC, counter_comparisons);
         pC = &(*pC)->Dir;
         pD = (*pC)->Esq;
     }
+
+    (*counter_comparisons) ++;
     if (pD != NULL) {
-        if (EhNegro(pD->Esq) && EhNegro(pD->Dir)) {
-            InverteCor(pD);
-            if (EhRubro(*pC)) {
-                InverteCor(*pC);
+
+        (*counter_comparisons) ++;
+        if (EhNegro(pD->Esq, counter_comparisons) && EhNegro(pD->Dir, counter_comparisons)) {
+            InverteCor(pD, counter_comparisons);
+
+            (*counter_comparisons) ++;
+            if (EhRubro(*pC, counter_comparisons)) {
+                InverteCor(*pC, counter_comparisons);
                 return 0;
             }
         }
         else {
             int cor = (*pC)->cor;
             (*pC)->cor = 0;
-            if (EhNegro(pD->Esq))
-                RotacaoEsquerda(&(*pC)->Esq);
+
+            (*counter_comparisons) ++;
+            if (EhNegro(pD->Esq, counter_comparisons))
+                RotacaoEsquerda(&(*pC)->Esq, counter_comparisons);
             else
-                InverteCor(pD->Esq);
-            RotacaoDireita(pC);
+                InverteCor(pD->Esq, counter_comparisons);
+
+            RotacaoDireita(pC, counter_comparisons);
             (*pC)->cor = cor;
             return 0;
         }
@@ -118,30 +184,41 @@ int BalancaEsquerda(TArvBin *pC)
     return 1;
 }
 
-int BalancaDireita(TArvBin *pC)
+int RedBlackTree::BalancaDireita(TArvBin *pC, int *counter_comparisons)
 {
     TArvBin pD = (*pC)->Dir;
-    if (EhRubro(pD)) {
-        RotacaoEsquerda(pC);
+
+    (*counter_comparisons) ++;
+    if (EhRubro(pD, counter_comparisons)) {
+        RotacaoEsquerda(pC, counter_comparisons);
         pC = &(*pC)->Esq;
         pD = (*pC)->Dir;
     }
+
+    (*counter_comparisons) ++;
     if (pD != NULL) {
-        if (EhNegro(pD->Esq) && EhNegro(pD->Dir)) { // caso 1
-            InverteCor(pD);
-            if (EhRubro(*pC)) {
-                InverteCor(*pC);
+
+        (*counter_comparisons) ++;
+        if (EhNegro(pD->Esq, counter_comparisons) && EhNegro(pD->Dir, counter_comparisons)) { // caso 1
+            InverteCor(pD, counter_comparisons);
+
+            (*counter_comparisons) ++;
+            if (EhRubro(*pC, counter_comparisons)) {
+                InverteCor(*pC, counter_comparisons);
                 return 0;
             }
         }
         else {
             int cor = (*pC)->cor;
             (*pC)->cor = 0;
-            if (EhNegro(pD->Dir)) // caso 2a
-                RotacaoDireita(&(*pC)->Dir);
+
+            (*counter_comparisons) ++;
+            if (EhNegro(pD->Dir, counter_comparisons)) // caso 2a
+                RotacaoDireita(&(*pC)->Dir, counter_comparisons);
             else
-                InverteCor(pD->Dir);
-            RotacaoEsquerda(pC); // caso 3a
+                InverteCor(pD->Dir, counter_comparisons);
+                
+            RotacaoEsquerda(pC, counter_comparisons); // caso 3a
             (*pC)->cor = cor;
             return 0;
         }
@@ -149,91 +226,114 @@ int BalancaDireita(TArvBin *pC)
     return 1;
 }
 
-void BalancaNo(TArvBin *pA, TArvBin *pB, TArvBin *pC)
-{
-    if ((pC != NULL) && EhRubro(*pA) && EhRubro(*pB)) {
-        if (*pA == (*pC)->Esq)
-            BalancaEsquerda(pA, pB, pC);
-        else
-            BalancaDireita(pA, pB, pC);
-    }
-}
-
-void InsereRecursivo(TArvBin *pA, TArvBin *pC, TItem x)
+void RedBlackTree::InsereRecursivo(TArvBin *pA, TArvBin *pC, TItem x, int *counter_comparisons)
 {
     if (*pA == NULL) {
+        (*counter_comparisons) ++;
+
         *pA = (TArvBin) malloc(sizeof(TNo));
         (*pA)->Item = x; (*pA)->Esq = NULL; (*pA)->Dir = NULL;
         (*pA)->cor = 1;
     }
     else if (x.Chave < (*pA)->Item.Chave) {
-        InsereRecursivo(&(*pA)->Esq, pA, x);
-        BalancaNo(pA, &(*pA)->Esq, pC);
+        (*counter_comparisons) += 2;
+
+        InsereRecursivo(&(*pA)->Esq, pA, x, counter_comparisons);
+        BalancaNoInsere(pA, &(*pA)->Esq, pC, counter_comparisons);
     }
     else if (x.Chave > (*pA)->Item.Chave) {
-        InsereRecursivo(&(*pA)->Dir, pA, x);
-        BalancaNo(pA, &(*pA)->Dir, pC);
+        (*counter_comparisons) += 3;
+
+        InsereRecursivo(&(*pA)->Dir, pA, x, counter_comparisons);
+        BalancaNoInsere(pA, &(*pA)->Dir, pC, counter_comparisons);
     }
 }
 
-void Insere(TArvBin *pRaiz, TItem x)
+void RedBlackTree::Insere(TArvBin *pRaiz, TItem x, int *counter_comparisons)
 {
-    InsereRecursivo(pRaiz, NULL, x);
+    InsereRecursivo(pRaiz, NULL, x, counter_comparisons);
     (*pRaiz)->cor = 0;
 }
 
-int Sucessor(TArvBin *q, TArvBin *r)
+int RedBlackTree::Sucessor(TArvBin *q, TArvBin *r, int *counter_comparisons)
 {
     int bh;
+
+    (*counter_comparisons) ++;
     if ((*r)->Esq != NULL) {
-        if (Sucessor(q, &(*r)->Esq))
-            return BalancaDireita(r);
+
+        (*counter_comparisons) ++;
+        if (Sucessor(q, &(*r)->Esq, counter_comparisons))
+            return BalancaDireita(r, counter_comparisons);
         return 0;
     }
     else {
         (*q)->Item = (*r)->Item;
         *q = *r;
         *r = (*r)->Dir;
-        bh = EhNegro(*q) && EhNegro(*r);
-        if (!bh && EhNegro(*q))
+        bh = EhNegro(*q, counter_comparisons) && EhNegro(*r, counter_comparisons);
+
+        (*counter_comparisons) ++;
+        if (!bh && EhNegro(*q, counter_comparisons))
             (*r)->cor = 0;
         return bh;
     }
 }
 
-int RetiraRecursivo(TArvBin *p, TChave x)
+int RedBlackTree::RetiraRecursivo(TArvBin *p, TChave x, int *counter_comparisons)
 {
     TArvBin q;
     int bh;
-    if (*p == NULL)
+    if (*p == NULL) {
+        (*counter_comparisons) ++;
         return 0;
+    }
     else if (x < (*p)->Item.Chave) {
-        if (RetiraRecursivo(&(*p)->Esq, x))
-            return BalancaDireita(p);
+        (*counter_comparisons) += 2;
+
+        (*counter_comparisons) ++;
+        if (RetiraRecursivo(&(*p)->Esq, x, counter_comparisons))
+            return BalancaDireita(p, counter_comparisons);
         return 0;
     }
     else if (x > (*p)->Item.Chave) {
-        if (RetiraRecursivo(&(*p)->Dir, x))
-            return BalancaEsquerda(p);
+        (*counter_comparisons) += 3;
+
+        (*counter_comparisons) ++;
+        if (RetiraRecursivo(&(*p)->Dir, x, counter_comparisons))
+            return BalancaEsquerda(p, counter_comparisons);
         return 0;
     }
     else {
+        (*counter_comparisons) += 3;
+
         q = *p;
         if (q->Esq == NULL) {
+            (*counter_comparisons) ++;
+
             *p = q->Dir;
-            bh = EhNegro(*p) && EhNegro(q);
-            if (!bh && EhNegro(q))
+            bh = EhNegro(*p, counter_comparisons) && EhNegro(q, counter_comparisons);
+
+            (*counter_comparisons) ++;
+            if (!bh && EhNegro(q, counter_comparisons))
                 (*p)->cor = 0;
         }
         else if (q->Dir == NULL) {
+            (*counter_comparisons) += 2;
+
             *p = q->Esq;
-            bh = EhNegro(*p) && EhNegro(q);
-            if (!bh && EhNegro(q))
+            bh = EhNegro(*p, counter_comparisons) && EhNegro(q, counter_comparisons);
+
+            (*counter_comparisons) ++;
+            if (!bh && EhNegro(q, counter_comparisons))
                 (*p)->cor = 0;
         }
         else { // possui dois filhos
-            if (Sucessor(&q, &q->Dir))
-                bh = BalancaEsquerda(p);
+            (*counter_comparisons) += 2;
+
+            (*counter_comparisons) ++;
+            if (Sucessor(&q, &q->Dir, counter_comparisons))
+                bh = BalancaEsquerda(p, counter_comparisons);
             else bh = 0;
         }
         free(q);
@@ -241,9 +341,115 @@ int RetiraRecursivo(TArvBin *p, TChave x)
     }
 }
 
-void Retira(TArvBin *pRaiz, TChave x)
+void RedBlackTree::Retira(TArvBin *pRaiz, TChave x, int *counter_comparisons)
 {
-    RetiraRecursivo(pRaiz, x);
+    RetiraRecursivo(pRaiz, x, counter_comparisons);
+
+    (*counter_comparisons) ++;
     if (*pRaiz != NULL)
     (*pRaiz)->cor = 0;
+}
+
+TArvBin* RedBlackTree::Pesquisa(TArvBin *No, TChave c, int *counter_comparisons)
+{
+    if (No == NULL) {
+        (*counter_comparisons) ++;
+
+        return NULL;
+    }
+    else if (c < (*No)->Item.Chave) {
+        (*counter_comparisons) += 2;
+
+        return Pesquisa(&(*No)->Esq, c, counter_comparisons);
+    }
+    else if (c > (*No)->Item.Chave) {
+        (*counter_comparisons) += 3;
+
+        return Pesquisa(&(*No)->Dir, c, counter_comparisons);
+    }
+    else {
+        (*counter_comparisons) += 3;
+
+        return No;
+    }
+        
+}
+
+std::variant<TDicionario*, TArvBin*> RedBlackTree::testInsere(std::vector<int> dataset, int *counter_comparisons) {
+
+    TArvBin arvore = NULL;
+
+    int sum = 0;
+
+    for (int i = 0; i < dataset.size(); ++i) {
+        TItem item;
+        item.Chave = dataset[i];
+
+        int counter_comparisons_insertion = 0;
+
+        Insere(&arvore, item, &counter_comparisons_insertion);
+
+        sum += counter_comparisons_insertion;
+    }
+
+    (*counter_comparisons) = sum / dataset.size();
+
+    TArvBin* ponteiroArvore = &arvore;
+
+    return ponteiroArvore;
+}
+
+std::variant<TDicionario*, TArvBin*> RedBlackTree::testPesquisa(std::variant<TDicionario*, TArvBin*> dicionario, std::vector<int> dataset, int *counter_comparisons) {
+
+    // if (std::holds_alternative<TArvBin*>(dicionario)) {
+
+    //     TArvBin* dic_ptr = std::get<TArvBin*>(dicionario);
+
+    //     if (dic_ptr == NULL) {
+    //         return dicionario;
+    //     }
+
+    //     int sum = 0;
+
+    //     for (int i = 0; i < dataset.size(); ++i) {
+
+    //         int counter_comparisons_retira = 0;
+
+    //         TChave chave = dataset[i];
+
+    //         Pesquisa(dic_ptr, chave, &counter_comparisons_retira);
+
+    //         sum += counter_comparisons_retira;
+    //     }
+
+    //     (*counter_comparisons) = sum / dataset.size();
+
+    // }
+
+    return dicionario;
+}
+
+std::variant<TDicionario*, TArvBin*> RedBlackTree::testRetira(std::variant<TDicionario*, TArvBin*> dicionario, std::vector<int> dataset, int *counter_comparisons) {
+
+    // if (std::holds_alternative<TArvBin*>(dicionario)) {
+
+    //     TArvBin* dic_ptr = std::get<TArvBin*>(dicionario);
+
+    //     int sum = 0;
+
+    //     for (int i = 0; i < dataset.size(); ++i) {
+
+    //         int counter_comparisons_retira = 0;
+
+    //         TChave chave = dataset[i];
+
+    //         Retira(dic_ptr, chave, &counter_comparisons_retira);
+
+    //         sum += counter_comparisons_retira;
+    //     }
+
+    //     (*counter_comparisons) = sum / dataset.size();
+    // }
+
+    return dicionario;
 }
