@@ -389,30 +389,30 @@ std::variant<TDicionario*, TArvBin*> AVLTree::testInsere(std::vector<int> datase
 
 std::variant<TDicionario*, TArvBin*> AVLTree::testPesquisa(std::variant<TDicionario*, TArvBin*> dicionario, std::vector<int> dataset, int *counter_comparisons) {
 
-    // if (std::holds_alternative<TArvBin*>(dicionario)) {
+    if (std::holds_alternative<TArvBin*>(dicionario)) {
 
-    //     TArvBin* dic_ptr = std::get<TArvBin*>(dicionario);
+        TArvBin* dic_ptr = std::get<TArvBin*>(dicionario);
 
-    //     if (dic_ptr == NULL) {
-    //         return dicionario;
-    //     }
+        if (dic_ptr == NULL) {
+            return dicionario;
+        }
 
-    //     int sum = 0;
+        int sum = 0;
 
-    //     for (int i = 0; i < dataset.size(); ++i) {
+        for (int i = 0; i < dataset.size(); ++i) {
 
-    //         int counter_comparisons_retira = 0;
+            int counter_comparisons_retira = 0;
 
-    //         TChave chave = dataset[i];
+            TChave chave = dataset[i];
 
-    //         Pesquisa(dic_ptr, chave, &counter_comparisons_retira);
+            Pesquisa(dic_ptr, chave, &counter_comparisons_retira);
 
-    //         sum += counter_comparisons_retira;
-    //     }
+            sum += counter_comparisons_retira;
+        }
 
-    //     (*counter_comparisons) = sum / dataset.size();
+        (*counter_comparisons) = sum / dataset.size();
 
-    // }
+    }
 
     return dicionario;
 }

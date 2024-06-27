@@ -27,9 +27,10 @@ public:
     void Retira(TArvBin *pRaiz, TChave x, int *counter_comparisons);
     TArvBin* Pesquisa(TArvBin *No, TChave c, int *counter_comparisons);
     
-    std::variant<TDicionario*, TArvBin*> testInsere(std::vector<int> dataset, int *counter_comparisons) override;
-    std::variant<TDicionario*, TArvBin*> testPesquisa(std::variant<TDicionario*, TArvBin*> dicionario, std::vector<int> dataset, int *counter_comparisons) override;
-    std::variant<TDicionario*, TArvBin*> testRetira(std::variant<TDicionario*, TArvBin*> dicionario, std::vector<int> dataset, int *counter_comparisons) override;
+    std::pair<int, std::pair<int, std::pair<int, std::pair<long double, std::pair<long double, long double>>>>> test(std::vector<int> dataset);
+    std::variant<TDicionario*, TArvBin> testInsere(std::vector<int> dataset, int *counter_comparisons) override;
+    std::variant<TDicionario*, TArvBin> testPesquisa(std::variant<TDicionario*, TArvBin> dicionario, std::vector<int> dataset, int *counter_comparisons) override;
+    std::variant<TDicionario*, TArvBin> testRetira(std::variant<TDicionario*, TArvBin> dicionario, std::vector<int> dataset, int *counter_comparisons) override;
 };
 
 #endif // REDBLACKTREE_H
