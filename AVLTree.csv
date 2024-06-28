@@ -1,0 +1,25 @@
+Algorithm;DatasetName;DatasetSize;Time Insere;Counter Comparisons Insere;Time Pesquisa;Counter Comparisons Pesquisa;Time Retira;Counter Comparisons Retira
+avlTree;Ordered;10;0.005;18;0.001;9;0.001;13;
+avlTree;Ordered;100;0.011;29;0.004;14;0.005;17;
+avlTree;Ordered;1000;0.071;42;0.05;22;0.046;24;
+avlTree;Ordered;10000;0.653;56;0.536;31;0.41;32;
+avlTree;Ordered;100000;6.652;69;6.367;39;4.677;40;
+avlTree;Ordered;1000000;89.564;82;85.046;47;57.916;47;
+avlTree;OrderedInverse;10;0.004;14;0;7;0.001;11;
+avlTree;OrderedInverse;100;0.005;24;0.003;15;0.004;22;
+avlTree;OrderedInverse;1000;0.044;33;0.038;23;0.031;32;
+avlTree;OrderedInverse;10000;0.492;44;0.485;31;0.372;42;
+avlTree;OrderedInverse;100000;5.977;54;6.61;39;4.843;52;
+avlTree;OrderedInverse;1000000;73.929;63;82.227;47;60.684;62;
+avlTree;AlmostOrdered;10;0.004;15;0.001;7;0.002;10;
+avlTree;AlmostOrdered;100;0.007;27;0.004;14;0.006;19;
+avlTree;AlmostOrdered;1000;0.066;39;0.049;23;0.054;29;
+avlTree;AlmostOrdered;10000;0.835;51;0.698;31;0.678;38;
+avlTree;AlmostOrdered;100000;10.863;63;9.58;40;10.385;49;
+avlTree;AlmostOrdered;1000000;178.211;74;169.4;49;195.555;60;
+avlTree;Random;10;0.004;15;0.001;7;0.002;11;
+avlTree;Random;100;0.008;24;0.004;15;0.007;21;
+avlTree;Random;1000;0.099;36;0.065;23;0.087;32;
+avlTree;Random;10000;1.176;48;0.93;31;1.096;44;
+avlTree;Random;100000;17.642;59;14.623;40;17.76;55;
+avlTree;Random;1000000;370.055;71;343.38;48;458.02;67;

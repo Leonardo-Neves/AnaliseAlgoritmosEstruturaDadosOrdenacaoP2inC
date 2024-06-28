@@ -86,13 +86,17 @@ void runInteration(std::map<std::string, SearchAlgorithm*> methods, int iteratio
 
                 std::vector<std::thread> threads;
 
+                
+
+
                 for (int j = 0; j < datasets[i].size(); ++j) {
-                    threads.emplace_back(runExperiment, iteration, function->first, std::move(function->second), datasets[i][j], datasets_name[i], std::ref(file));
+                    runExperiment(iteration, function->first, std::move(function->second), datasets[i][j], datasets_name[i], std::ref(file));
+                    // threads.emplace_back(runExperiment, iteration, function->first, std::move(function->second), datasets[i][j], datasets_name[i], std::ref(file));
                 }
 
-                for (int i = 0; i < threads.size(); ++i) {
-                    threads[i].join();
-                }
+                // for (int i = 0; i < threads.size(); ++i) {
+                //     threads[i].join();
+                // }
             }
         }
 
@@ -180,8 +184,8 @@ int main()
     // methods["linearSearch"] = new LinearSearch();
     // methods["binarySearch"] = new BinarySearch();
     // methods["binarySearchTree"] = new BinarySearchTree();
-    // methods["avlTree"] = new AVLTree();
-    methods["redBlackTree"] = new RedBlackTree();
+    methods["avlTree"] = new AVLTree();
+    // methods["redBlackTree"] = new RedBlackTree();
 
     // Nome dos conjuntos de dados, informação que será utilizada posteriormente como identificador no arquivo CSV de resultado
     std::vector<std::string> datasets_name = {

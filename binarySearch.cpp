@@ -116,7 +116,7 @@ int BinarySearch::TDicionario_Retira(TDicionario *D, TChave c, int *counter_comp
 //     }
 // }
 
-std::variant<TDicionario*, TArvBin*> BinarySearch::testInsere(std::vector<int> dataset, int *counter_comparisons) {
+std::variant<TDicionario*, TArvBin> BinarySearch::testInsere(std::vector<int> dataset, int *counter_comparisons) {
 
     auto dicionario = TDicionario_Inicia(dataset.size(), counter_comparisons);
 
@@ -139,7 +139,7 @@ std::variant<TDicionario*, TArvBin*> BinarySearch::testInsere(std::vector<int> d
     return dicionario;
 }
 
-std::variant<TDicionario*, TArvBin*> BinarySearch::testPesquisa(std::variant<TDicionario*, TArvBin*> dicionario, std::vector<int> dataset, int *counter_comparisons) {
+std::variant<TDicionario*, TArvBin> BinarySearch::testPesquisa(std::variant<TDicionario*, TArvBin> dicionario, std::vector<int> dataset, int *counter_comparisons) {
 
     if (std::holds_alternative<TDicionario*>(dicionario)) {
         TDicionario* dic_ptr = std::get<TDicionario*>(dicionario);
@@ -162,7 +162,7 @@ std::variant<TDicionario*, TArvBin*> BinarySearch::testPesquisa(std::variant<TDi
     return dicionario;
 }
 
-std::variant<TDicionario*, TArvBin*> BinarySearch::testRetira(std::variant<TDicionario*, TArvBin*> dicionario, std::vector<int> dataset, int *counter_comparisons) {
+std::variant<TDicionario*, TArvBin> BinarySearch::testRetira(std::variant<TDicionario*, TArvBin> dicionario, std::vector<int> dataset, int *counter_comparisons) {
 
     if (std::holds_alternative<TDicionario*>(dicionario)) {
 

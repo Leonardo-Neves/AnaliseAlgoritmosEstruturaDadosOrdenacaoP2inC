@@ -387,82 +387,6 @@ TArvBin* RedBlackTree::Pesquisa(TArvBin *No, TChave c, int *counter_comparisons)
         
 }
 
-std::pair<int, std::pair<int, std::pair<int, std::pair<long double, std::pair<long double, long double>>>>> RedBlackTree::test(std::vector<int> dataset) {
-
-    auto arvore = (TArvBin) malloc(sizeof(TNo));
-
-    // Insertion
-
-    int sum_insertion = 0;
-
-    std::clock_t start_insertion = std::clock();
-
-    for (int i = 0; i < dataset.size(); ++i) {
-        TItem item;
-        item.Chave = dataset[i];
-
-        int counter_comparisons_insertion = 0;
-
-        Insere(&arvore, item, &counter_comparisons_insertion);
-
-        sum_insertion += counter_comparisons_insertion;
-    }
-
-    std::clock_t end_insertion = std::clock();
-
-    int mean_insertion = sum_insertion / dataset.size();
-
-    long double diff_insertion = 1000.0 * (end_insertion - start_insertion) / CLOCKS_PER_SEC;
-
-    // Pesquisa
-
-    int sum_pesquisa = 0;
-
-    std::clock_t start_pesquisa = std::clock();
-
-    // for (int i = 0; i < dataset.size(); ++i) {
-
-    //     int counter_comparisons_pesquisa = 0;
-
-    //     TChave chave = dataset[i];
-
-    //     Pesquisa(&arvore, chave, &counter_comparisons_pesquisa);
-
-    //     sum_pesquisa += counter_comparisons_pesquisa;
-    // }
-
-    std::clock_t end_pesquisa = std::clock();
-
-    int mean_pesquisa = sum_pesquisa / dataset.size();
-
-    long double diff_pesquisa = 1000.0 * (end_pesquisa - start_pesquisa) / CLOCKS_PER_SEC;
-
-    // Retira
-
-    int sum_retira = 0;
-
-    std::clock_t start_retira = std::clock();
-
-    // for (int i = 0; i < dataset.size(); ++i) {
-
-    //     int counter_comparisons_retira = 0;
-
-    //     TChave chave = dataset[i];
-
-    //     Retira(&arvore, chave, &counter_comparisons_retira);
-
-    //     sum_retira += counter_comparisons_retira;
-    // }
-
-    std::clock_t end_retira = std::clock();
-
-    int mean_retira = sum_retira / dataset.size();
-
-    long double diff_retira = 1000.0 * (end_retira - start_retira) / CLOCKS_PER_SEC;
-
-    return std::make_pair(mean_insertion, std::make_pair(mean_pesquisa, std::make_pair(mean_retira, std::make_pair(diff_insertion, std::make_pair(diff_pesquisa, diff_retira)))));
-}
-
 std::variant<TDicionario*, TArvBin> RedBlackTree::testInsere(std::vector<int> dataset, int *counter_comparisons) {
 
     auto arvore = (TArvBin) malloc(sizeof(TNo));
@@ -520,6 +444,10 @@ std::variant<TDicionario*, TArvBin> RedBlackTree::testRetira(std::variant<TDicio
     if (std::holds_alternative<TArvBin>(dicionario)) {
 
         TArvBin dic_ptr = std::get<TArvBin>(dicionario);
+
+        if (dic_ptr == NULL) {
+            return dicionario;
+        }
 
         int sum = 0;
 

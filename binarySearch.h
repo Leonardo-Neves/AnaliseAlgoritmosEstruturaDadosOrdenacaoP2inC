@@ -13,9 +13,9 @@ public:
     int TDicionario_Insere(TDicionario *D, TItem x, int *counter_comparisons);
     int TDicionario_Retira(TDicionario *D, TChave c, int *counter_comparisons);
     
-    std::variant<TDicionario*, TArvBin*> testInsere(std::vector<int> dataset, int *counter_comparisons) override;
-    std::variant<TDicionario*, TArvBin*> testPesquisa(std::variant<TDicionario*, TArvBin*> dicionario, std::vector<int> dataset, int *counter_comparisons) override;
-    std::variant<TDicionario*, TArvBin*> testRetira(std::variant<TDicionario*, TArvBin*> dicionario, std::vector<int> dataset, int *counter_comparisons) override;
+    std::variant<TDicionario*, TArvBin> testInsere(std::vector<int> dataset, int *counter_comparisons) override;
+    std::variant<TDicionario*, TArvBin> testPesquisa(std::variant<TDicionario*, TArvBin> dicionario, std::vector<int> dataset, int *counter_comparisons) override;
+    std::variant<TDicionario*, TArvBin> testRetira(std::variant<TDicionario*, TArvBin> dicionario, std::vector<int> dataset, int *counter_comparisons) override;
 };
 
 #endif // BINARYSEARCH_H

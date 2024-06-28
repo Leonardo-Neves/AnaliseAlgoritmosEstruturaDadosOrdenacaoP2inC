@@ -363,9 +363,9 @@ TArvBin* AVLTree::Pesquisa(TArvBin *No, TChave c, int *counter_comparisons)
         
 }
 
-std::variant<TDicionario*, TArvBin*> AVLTree::testInsere(std::vector<int> dataset, int *counter_comparisons) {
+std::variant<TDicionario*, TArvBin> AVLTree::testInsere(std::vector<int> dataset, int *counter_comparisons) {
 
-    TArvBin arvore = NULL;
+    auto arvore = (TArvBin) malloc(sizeof(TNo));
 
     int sum = 0;
 
@@ -382,16 +382,14 @@ std::variant<TDicionario*, TArvBin*> AVLTree::testInsere(std::vector<int> datase
 
     (*counter_comparisons) = sum / dataset.size();
 
-    TArvBin* ponteiroArvore = &arvore;
-
-    return ponteiroArvore;
+    return arvore;
 }
 
-std::variant<TDicionario*, TArvBin*> AVLTree::testPesquisa(std::variant<TDicionario*, TArvBin*> dicionario, std::vector<int> dataset, int *counter_comparisons) {
+std::variant<TDicionario*, TArvBin> AVLTree::testPesquisa(std::variant<TDicionario*, TArvBin> dicionario, std::vector<int> dataset, int *counter_comparisons) {
 
-    if (std::holds_alternative<TArvBin*>(dicionario)) {
+    if (std::holds_alternative<TArvBin>(dicionario)) {
 
-        TArvBin* dic_ptr = std::get<TArvBin*>(dicionario);
+        TArvBin dic_ptr = std::get<TArvBin>(dicionario);
 
         if (dic_ptr == NULL) {
             return dicionario;
@@ -405,7 +403,7 @@ std::variant<TDicionario*, TArvBin*> AVLTree::testPesquisa(std::variant<TDiciona
 
             TChave chave = dataset[i];
 
-            Pesquisa(dic_ptr, chave, &counter_comparisons_retira);
+            Pesquisa(&dic_ptr, chave, &counter_comparisons_retira);
 
             sum += counter_comparisons_retira;
         }
@@ -417,11 +415,11 @@ std::variant<TDicionario*, TArvBin*> AVLTree::testPesquisa(std::variant<TDiciona
     return dicionario;
 }
 
-std::variant<TDicionario*, TArvBin*> AVLTree::testRetira(std::variant<TDicionario*, TArvBin*> dicionario, std::vector<int> dataset, int *counter_comparisons) {
+std::variant<TDicionario*, TArvBin> AVLTree::testRetira(std::variant<TDicionario*, TArvBin> dicionario, std::vector<int> dataset, int *counter_comparisons) {
 
-    if (std::holds_alternative<TArvBin*>(dicionario)) {
+    if (std::holds_alternative<TArvBin>(dicionario)) {
 
-        TArvBin* dic_ptr = std::get<TArvBin*>(dicionario);
+        TArvBin dic_ptr = std::get<TArvBin>(dicionario);
 
         int sum = 0;
 
@@ -431,7 +429,7 @@ std::variant<TDicionario*, TArvBin*> AVLTree::testRetira(std::variant<TDicionari
 
             TChave chave = dataset[i];
 
-            Retira(dic_ptr, chave, &counter_comparisons_retira);
+            Retira(&dic_ptr, chave, &counter_comparisons_retira);
 
             sum += counter_comparisons_retira;
         }
