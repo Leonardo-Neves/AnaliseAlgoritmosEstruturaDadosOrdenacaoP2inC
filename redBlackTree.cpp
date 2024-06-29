@@ -240,9 +240,6 @@ int RedBlackTree::BalancaDireita(TArvBin *pC, int *counter_comparisons)
 
 void RedBlackTree::InsereRecursivo(TArvBin *pA, TArvBin *pC, TItem x, int *counter_comparisons)
 {   
-    // std::cout << "Inserting " << x.Chave << " into tree" << std::endl;
-    // std::cout << "Current node: " << (pA ? (*pA)->Item.Chave : -1) << std::endl;
-
     if (*pA == NULL) {
         (*counter_comparisons) ++;
 
@@ -252,18 +249,13 @@ void RedBlackTree::InsereRecursivo(TArvBin *pA, TArvBin *pC, TItem x, int *count
         
     }
     else if (x.Chave < (*pA)->Item.Chave) {
-
         (*counter_comparisons) += 2;
-        
-        // std::cout << "Left child: " << ((*pA && (*pA)->Esq) ? (*pA)->Esq->Item.Chave : -1) << std::endl;
 
         InsereRecursivo(&(*pA)->Esq, pA, x, counter_comparisons);
         BalancaNoInsere(pA, &(*pA)->Esq, pC, counter_comparisons);
     }
     else if (x.Chave > (*pA)->Item.Chave) {
         (*counter_comparisons) += 3;
-
-        // std::cout << "Right child: " << ((*pA && (*pA)->Dir) ? (*pA)->Dir->Item.Chave : -1) << std::endl;
         
         InsereRecursivo(&(*pA)->Dir, pA, x, counter_comparisons);
         BalancaNoInsere(pA, &(*pA)->Dir, pC, counter_comparisons);

@@ -14,10 +14,10 @@
 #include <iomanip>
 #include <exception>
 
-// #include "AVLTree.h"
-// #include "binarySearch.h"
-// #include "binarySearchTree.h"
-// #include "linearSearch.h"
+#include "AVLTree.h"
+#include "binarySearch.h"
+#include "binarySearchTree.h"
+#include "linearSearch.h"
 #include "redBlackTree.h"
 #include "datasetGenerator.h"
 
@@ -107,18 +107,18 @@ int main() {
     auto datasets = generateDataset(lengthLists);
 
     std::map<std::string, SearchAlgorithm*> methods;
-    // methods["linearSearch"] = new LinearSearch();
-    // methods["binarySearch"] = new BinarySearch();
-    // methods["binarySearchTree"] = new BinarySearchTree();
-    // methods["avlTree"] = new AVLTree();
+    methods["linearSearch"] = new LinearSearch();
+    methods["binarySearch"] = new BinarySearch();
+    methods["binarySearchTree"] = new BinarySearchTree();
+    methods["avlTree"] = new AVLTree();
     methods["redBlackTree"] = new RedBlackTree();
 
     std::ofstream file("redBlackTree.csv");
 
     file << "Algorithm;DatasetName;DatasetSize;Time Insere;Counter Comparisons Insere;Time Pesquisa;Counter Comparisons Pesquisa;Time Retira;Counter Comparisons Retira\n";
 
-    // int total_iterations = methods.size() * datasets.size() * datasets[0].size();
-    // ProgressBar progress(total_iterations);
+    int total_iterations = methods.size() * datasets.size() * datasets[0].size();
+    ProgressBar progress(total_iterations);
     
     if (file.is_open()) {
 
@@ -154,7 +154,7 @@ int main() {
                                 << diff_retira << ";" << counter_comparisons_retira<< ";" << "\n";
                         }
 
-                        // progress.update();
+                        progress.update();
                     } catch (const std::exception& e) {
                         std::cerr << e.what() << std::endl;
                     }
