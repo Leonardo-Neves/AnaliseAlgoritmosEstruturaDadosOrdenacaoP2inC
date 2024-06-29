@@ -24,10 +24,23 @@ int main() {
     RedBlackTree redBlackTree;
 
     auto dataset = datasetGenerator.generateAlmostOrdered(1000000);
+
+    std::ofstream file("test.txt");
+
+    if (file.is_open()) {
+        for (int i = 0; i < dataset.size(); ++i) {
+            {
+                file << dataset[i] << "\n";
+            }
+        }
+    }
+
+    file.close();
+
     
     int counter = 0;
 
-    redBlackTree.testInsere(dataset, &counter);
+    // redBlackTree.testInsere(dataset, &counter);
 
 
     return 0;
