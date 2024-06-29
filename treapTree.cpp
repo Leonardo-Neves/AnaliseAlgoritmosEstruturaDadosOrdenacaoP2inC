@@ -5,47 +5,11 @@
 #include <ctime>
 #include <cstdlib>
 
-typedef int TChave;
+#include "datasetGenerator.h"
 
-typedef struct {
-    TChave Chave;
-    int Priority;
-} TItem;
+#include "treapTree.h"
 
-typedef int TApontador;
-
-typedef struct SNo *TArvBin;
-
-typedef struct SNo {
-    TItem Item;
-    TArvBin Esq, Dir;
-} TNo;
-
-typedef struct {
-    TItem *Item;
-    TArvBin Raiz;
-    int n, max;
-} TDicionario;
-
-class Treap {
-public:
-    Treap();
-
-    int Altura(TArvBin No, int *counter_comparisons);
-    TArvBin* Pesquisa(TArvBin *No, TChave c, int *counter_comparisons);
-    int Insere(TArvBin *pNo, TItem x, int *counter_comparisons);
-    int Retira(TArvBin *p, TChave c, int *counter_comparisons);
-
-private:
-    void RR(TArvBin *pA, int *counter_comparisons);
-    void LL(TArvBin *pA, int *counter_comparisons);
-};
-
-Treap::Treap() {
-    srand(time(NULL));
-}
-
-int Treap::Altura(TArvBin No, int *counter_comparisons) {
+int TreapTree::Altura(TArvBin No, int *counter_comparisons) {
     int hEsq, hDir;
 
     (*counter_comparisons)++;
@@ -62,7 +26,7 @@ int Treap::Altura(TArvBin No, int *counter_comparisons) {
         return hDir + 1;
 }
 
-void Treap::LL(TArvBin *pA, int *counter_comparisons) {
+void TreapTree::LL(TArvBin *pA, int *counter_comparisons) {
     TArvBin pB;
     pB = (*pA)->Esq;
     (*pA)->Esq = pB->Dir;
@@ -70,7 +34,7 @@ void Treap::LL(TArvBin *pA, int *counter_comparisons) {
     *pA = pB;
 }
 
-void Treap::RR(TArvBin *pA, int *counter_comparisons) {
+void TreapTree::RR(TArvBin *pA, int *counter_comparisons) {
     TArvBin pB;
     pB = (*pA)->Dir;
     (*pA)->Dir = pB->Esq;
@@ -78,7 +42,7 @@ void Treap::RR(TArvBin *pA, int *counter_comparisons) {
     *pA = pB;
 }
 
-TArvBin* Treap::Pesquisa(TArvBin *No, TChave c, int *counter_comparisons) {
+TArvBin* TreapTree::Pesquisa(TArvBin *No, TChave c, int *counter_comparisons) {
     if (No == NULL) {
         (*counter_comparisons)++;
         return NULL;
@@ -97,7 +61,7 @@ TArvBin* Treap::Pesquisa(TArvBin *No, TChave c, int *counter_comparisons) {
     }
 }
 
-int Treap::Insere(TArvBin *pNo, TItem x, int *counter_comparisons) {
+int TreapTree::Insere(TArvBin *pNo, TItem x, int *counter_comparisons) {
     if (*pNo == NULL) {
         (*counter_comparisons)++;
         *pNo = (TArvBin)malloc(sizeof(TNo));
@@ -130,7 +94,7 @@ int Treap::Insere(TArvBin *pNo, TItem x, int *counter_comparisons) {
     }
 }
 
-int Treap::Retira(TArvBin *p, TChave c, int *counter_comparisons) {
+int TreapTree::Retira(TArvBin *p, TChave c, int *counter_comparisons) {
     if (*p == NULL) {
         (*counter_comparisons)++;
         return 0;
@@ -169,20 +133,20 @@ int Treap::Retira(TArvBin *p, TChave c, int *counter_comparisons) {
     }
 }
 
-int main() {
+// int main() {
 
-    auto arvore = (TArvBin) malloc(sizeof(TNo));
+//     auto arvore = (TArvBin) malloc(sizeof(TNo));
 
-    Treap treap;
+//     Treap treap;
 
-    int comparisons = 0;
-    TItem item1 = {10, rand()};
-    TItem item2 = {20, rand()};
-    TItem item3 = {5, rand()};
+//     int comparisons = 0;
+//     TItem item1 = {10, rand()};
+//     TItem item2 = {20, rand()};
+//     TItem item3 = {5, rand()};
 
-    treap.Insere(&arvore, item1, &comparisons);
-    treap.Insere(&arvore, item2, &comparisons);
-    treap.Insere(&arvore, item3, &comparisons);
+//     treap.Insere(&arvore, item1, &comparisons);
+//     treap.Insere(&arvore, item2, &comparisons);
+//     treap.Insere(&arvore, item3, &comparisons);
 
     // TArvBin found = treap.Pesquisa(&arvore, 10, &comparisons);
     // if (found) {
@@ -200,5 +164,5 @@ int main() {
     //     std::cout << "Key not found" << std::endl;
     // }
 
-    return 0;
-}
+//     return 0;
+// }

@@ -8,6 +8,7 @@ typedef int TChave;
 
 typedef struct {
     TChave Chave;
+    int Priority;
 } TItem;
 
 typedef int TApontador;
