@@ -25,22 +25,26 @@ int main() {
 
     auto dataset = datasetGenerator.generateAlmostOrdered(1000000);
 
-    std::ofstream file("test.txt");
+    // std::ofstream file("test.txt");
 
-    if (file.is_open()) {
-        for (int i = 0; i < dataset.size(); ++i) {
-            {
-                file << dataset[i] << "\n";
-            }
-        }
-    }
+    // if (file.is_open()) {
+    //     for (int i = 0; i < dataset.size(); ++i) {
+    //         {
+    //             file << dataset[i] << "\n";
+    //         }
+    //     }
+    // }
 
-    file.close();
+    // file.close();
 
     
     int counter = 0;
 
-    // redBlackTree.testInsere(dataset, &counter);
+    auto result = redBlackTree.testInsere(dataset, &counter);
+
+    auto result1 = redBlackTree.testPesquisa(result, dataset, &counter);
+
+    auto result2 = redBlackTree.testRetira(result, dataset, &counter);
 
 
     return 0;

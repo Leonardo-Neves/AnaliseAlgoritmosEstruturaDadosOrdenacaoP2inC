@@ -240,8 +240,8 @@ int RedBlackTree::BalancaDireita(TArvBin *pC, int *counter_comparisons)
 
 void RedBlackTree::InsereRecursivo(TArvBin *pA, TArvBin *pC, TItem x, int *counter_comparisons)
 {   
-    std::cout << "Inserting " << x.Chave << " into tree" << std::endl;
-    std::cout << "Current node: " << (pA ? (*pA)->Item.Chave : -1) << std::endl;
+    // std::cout << "Inserting " << x.Chave << " into tree" << std::endl;
+    // std::cout << "Current node: " << (pA ? (*pA)->Item.Chave : -1) << std::endl;
 
     if (*pA == NULL) {
         (*counter_comparisons) ++;
@@ -255,7 +255,7 @@ void RedBlackTree::InsereRecursivo(TArvBin *pA, TArvBin *pC, TItem x, int *count
 
         (*counter_comparisons) += 2;
         
-        std::cout << "Left child: " << ((*pA && (*pA)->Esq) ? (*pA)->Esq->Item.Chave : -1) << std::endl;
+        // std::cout << "Left child: " << ((*pA && (*pA)->Esq) ? (*pA)->Esq->Item.Chave : -1) << std::endl;
 
         InsereRecursivo(&(*pA)->Esq, pA, x, counter_comparisons);
         BalancaNoInsere(pA, &(*pA)->Esq, pC, counter_comparisons);
@@ -263,7 +263,7 @@ void RedBlackTree::InsereRecursivo(TArvBin *pA, TArvBin *pC, TItem x, int *count
     else if (x.Chave > (*pA)->Item.Chave) {
         (*counter_comparisons) += 3;
 
-        std::cout << "Right child: " << ((*pA && (*pA)->Dir) ? (*pA)->Dir->Item.Chave : -1) << std::endl;
+        // std::cout << "Right child: " << ((*pA && (*pA)->Dir) ? (*pA)->Dir->Item.Chave : -1) << std::endl;
         
         InsereRecursivo(&(*pA)->Dir, pA, x, counter_comparisons);
         BalancaNoInsere(pA, &(*pA)->Dir, pC, counter_comparisons);
@@ -397,17 +397,16 @@ TArvBin* RedBlackTree::Pesquisa(TArvBin *No, TChave c, int *counter_comparisons)
 }
 
 std::variant<TDicionario*, TArvBin> RedBlackTree::testInsere(std::vector<int> dataset, int *counter_comparisons) {
-    std::cout << "1"<< std::endl;
-    auto arvore = (TArvBin) malloc(sizeof(TNo));
-    std::cout << "2"<< std::endl;
+    
+    auto arvore = (TArvBin) malloc(dataset.size() * sizeof(TNo));
     int sum = 0;
-    std::cout << "3"<< std::endl;
+    
     for (int i = 0; i < dataset.size(); ++i) {
         TItem item;
         item.Chave = dataset[i];
 
         int counter_comparisons_insertion = 0;
-        std::cout << "4"<< std::endl;
+        
         Insere(&arvore, item, &counter_comparisons_insertion);
         
         sum += counter_comparisons_insertion;
