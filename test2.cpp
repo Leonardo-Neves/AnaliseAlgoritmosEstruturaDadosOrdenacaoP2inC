@@ -26,7 +26,7 @@ int main() {
 
     DatasetGenerator datasetGenerator;
 
-    BinarySearch redBlackTree;
+    AVLTree redBlackTree;
     
     int counter = 0;
 
