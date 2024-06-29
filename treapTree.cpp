@@ -1,168 +1,281 @@
-#include <stdio.h>
-#include <stdlib.h> 
-#include <iostream>
-#include <cstddef>
-#include <ctime>
-#include <cstdlib>
-
-#include "datasetGenerator.h"
-
 #include "treapTree.h"
+#include <iostream>
+#include <cstdlib>
+#include <climits>
 
-int TreapTree::Altura(TArvBin No, int *counter_comparisons) {
-    int hEsq, hDir;
+// Construtor da classe Treap
+Treap::Treap() {}
 
-    (*counter_comparisons)++;
-    if (No == NULL)
-        return -1;
-
-    hEsq = Altura(No->Esq, counter_comparisons);
-    hDir = Altura(No->Dir, counter_comparisons);
-
-    (*counter_comparisons)++;
-    if (hEsq > hDir)
-        return hEsq + 1;
-    else
-        return hDir + 1;
+// Função para rotação à direita
+void Treap::RotacaoDireita(TArvBin *pA) {
+    TArvBin aux = (*pA)->Esq;
+    (*pA)->Esq = aux->Dir;
+    aux->Dir = *pA;
+    *pA = aux;
 }
 
-void TreapTree::LL(TArvBin *pA, int *counter_comparisons) {
-    TArvBin pB;
-    pB = (*pA)->Esq;
-    (*pA)->Esq = pB->Dir;
-    pB->Dir = *pA;
-    *pA = pB;
+// Função para rotação à esquerda
+void Treap::RotacaoEsquerda(TArvBin *pA) {
+    TArvBin aux = (*pA)->Dir;
+    (*pA)->Dir = aux->Esq;
+    aux->Esq = *pA;
+    *pA = aux;
 }
 
-void TreapTree::RR(TArvBin *pA, int *counter_comparisons) {
-    TArvBin pB;
-    pB = (*pA)->Dir;
-    (*pA)->Dir = pB->Esq;
-    pB->Esq = *pA;
-    *pA = pB;
-}
-
-TArvBin* TreapTree::Pesquisa(TArvBin *No, TChave c, int *counter_comparisons) {
-    if (No == NULL) {
+// Função para inserir um novo nó na Treap
+int Treap::Insere(TArvBin *pNo, TItem x, int *counter_comparisons) {
+    if (*pNo == NULL) {
+        *pNo = new SNo();
+        (*pNo)->Item = x;
+        (*pNo)->Esq = NULL;
+        (*pNo)->Dir = NULL;
+        return 1;
+    } else {
         (*counter_comparisons)++;
+        if (x.Chave < (*pNo)->Item.Chave) {
+            Insere(&(*pNo)->Esq, x, counter_comparisons);
+            if ((*pNo)->Esq->Item.Priority > (*pNo)->Item.Priority) {
+                RotacaoDireita(pNo);
+            }
+        } else {
+            Insere(&(*pNo)->Dir, x, counter_comparisons);
+            if ((*pNo)->Dir->Item.Priority > (*pNo)->Item.Priority) {
+                RotacaoEsquerda(pNo);
+            }
+        }
+    }
+    return 1;
+}
+
+// Função para pesquisar um nó na Treap
+TArvBin* Treap::Pesquisa(TArvBin *pNo, TChave c, int *counter_comparisons) {
+    if (*pNo == NULL) {
         return NULL;
     }
-    else if (c < (*No)->Item.Chave) {
-        (*counter_comparisons) += 2;
-        return Pesquisa(&(*No)->Esq, c, counter_comparisons);
-    }
-    else if (c > (*No)->Item.Chave) {
-        (*counter_comparisons) += 3;
-        return Pesquisa(&(*No)->Dir, c, counter_comparisons);
-    }
-    else {
-        (*counter_comparisons) += 3;
-        return No;
+
+    (*counter_comparisons)++;
+    if (c < (*pNo)->Item.Chave) {
+        return Pesquisa(&(*pNo)->Esq, c, counter_comparisons);
+    } else if (c > (*pNo)->Item.Chave) {
+        return Pesquisa(&(*pNo)->Dir, c, counter_comparisons);
+    } else {
+        return pNo;
     }
 }
 
-int TreapTree::Insere(TArvBin *pNo, TItem x, int *counter_comparisons) {
+// // Função para remover um nó da Treap
+// int Treap::Retira(TArvBin *pNo, TChave c, int *counter_comparisons) {
+//     if (*pNo == NULL) {
+//         return 0;
+//     }
+
+//     (*counter_comparisons)++;
+//     if (c < (*pNo)->Item.Chave) {
+//         return Retira(&(*pNo)->Esq, c, counter_comparisons);
+//     } else if (c > (*pNo)->Item.Chave) {
+//         return Retira(&(*pNo)->Dir, c, counter_comparisons);
+//     } else {
+//         // Se encontrou o nó a ser removido
+//         (*pNo)->Item.Priority = INT_MIN; // Definir a prioridade como -inf (ou valor mínimo de int)
+//         // Rotacionar para mover o nó para uma folha
+//         while ((*pNo)->Esq != NULL || (*pNo)->Dir != NULL) {
+//             if ((*pNo)->Esq == NULL) {
+//                 RotacaoEsquerda(pNo);
+//             } else if ((*pNo)->Dir == NULL) {
+//                 RotacaoDireita(pNo);
+//             } else if ((*pNo)->Esq->Item.Priority > (*pNo)->Dir->Item.Priority) {
+//                 RotacaoDireita(pNo);
+//             } else {
+//                 RotacaoEsquerda(pNo);
+//             }
+
+//             if ((*pNo)->Esq != NULL) {
+//                 RotacaoDireita(pNo);
+//             } else if ((*pNo)->Dir == NULL) {
+//                 RotacaoDireita(pNo);
+//             } else if ((*pNo)->Esq->Item.Priority > (*pNo)->Dir->Item.Priority) {
+//                 RotacaoDireita(pNo);
+//             } else {
+//                 RotacaoEsquerda(pNo);
+//             }
+//         }
+//         // Remover o nó folha
+//         TArvBin temp = *pNo;
+//         *pNo = NULL;
+//         delete temp;
+//         return 1;
+//     }
+// }
+// Função para remover um nó da Treap
+int Treap::Retira(TArvBin *pNo, TChave c, int *counter_comparisons) {
     if (*pNo == NULL) {
-        (*counter_comparisons)++;
-        *pNo = (TArvBin)malloc(sizeof(TNo));
-        (*pNo)->Item = x; (*pNo)->Esq = NULL; (*pNo)->Dir = NULL;
-        return 1;
+        return 0; // Nó não encontrado
     }
-    else if (x.Chave < (*pNo)->Item.Chave) {
-        (*counter_comparisons) += 2;
-        if (Insere(&(*pNo)->Esq, x, counter_comparisons)) {
-            (*counter_comparisons)++;
-            if ((*pNo)->Esq->Item.Priority < (*pNo)->Item.Priority) {
-                LL(pNo, counter_comparisons);
-            }
-        }
-        return 1;
-    }
-    else if (x.Chave > (*pNo)->Item.Chave) {
-        (*counter_comparisons) += 3;
-        if (Insere(&(*pNo)->Dir, x, counter_comparisons)) {
-            (*counter_comparisons)++;
-            if ((*pNo)->Dir->Item.Priority < (*pNo)->Item.Priority) {
-                RR(pNo, counter_comparisons);
-            }
-        }
-        return 1;
-    }
-    else {
-        (*counter_comparisons) += 3;
-        return 0;
-    }
-}
 
-int TreapTree::Retira(TArvBin *p, TChave c, int *counter_comparisons) {
-    if (*p == NULL) {
-        (*counter_comparisons)++;
-        return 0;
-    }
-    else if (c < (*p)->Item.Chave) {
-        (*counter_comparisons) += 2;
-        return Retira(&(*p)->Esq, c, counter_comparisons);
-    }
-    else if (c > (*p)->Item.Chave) {
-        (*counter_comparisons) += 3;
-        return Retira(&(*p)->Dir, c, counter_comparisons);
-    }
-    else {
-        (*counter_comparisons) += 3;
-        TArvBin q = *p;
-        if ((*p)->Esq == NULL) {
-            *p = (*p)->Dir;
-            free(q);
+    (*counter_comparisons)++;
+    if (c < (*pNo)->Item.Chave) {
+        return Retira(&(*pNo)->Esq, c, counter_comparisons);
+    } else if (c > (*pNo)->Item.Chave) {
+        return Retira(&(*pNo)->Dir, c, counter_comparisons);
+    } else {
+        // Nó encontrado para remoção
+
+        // Caso 1: Nó é uma folha (sem filhos)
+        if ((*pNo)->Esq == NULL && (*pNo)->Dir == NULL) {
+            TArvBin temp = *pNo;
+            *pNo = NULL;
+            delete temp;
             return 1;
         }
-        else if ((*p)->Dir == NULL) {
-            *p = (*p)->Esq;
-            free(q);
+        // Caso 2: Nó tem apenas um filho
+        else if ((*pNo)->Esq == NULL) {
+            TArvBin temp = *pNo;
+            *pNo = (*pNo)->Dir;
+            delete temp;
+            return 1;
+        } else if ((*pNo)->Dir == NULL) {
+            TArvBin temp = *pNo;
+            *pNo = (*pNo)->Esq;
+            delete temp;
             return 1;
         }
+        // Caso 3: Nó tem dois filhos
         else {
-            if ((*p)->Esq->Item.Priority < (*p)->Dir->Item.Priority) {
-                LL(p, counter_comparisons);
-                return Retira(&(*p)->Dir, c, counter_comparisons);
+            // // Encontrar o nó com a maior prioridade na subárvore esquerda
+            // TArvBin maxLeft = (*pNo)->Esq;
+            // while (maxLeft->Dir != NULL) {
+            //     maxLeft = maxLeft->Dir;
+            // }
+
+            // // Trocar os valores chave e prioridade com o nó com maior prioridade na subárvore esquerda
+            // std::swap((*pNo)->Item.Chave, maxLeft->Item.Chave);
+            // std::swap((*pNo)->Item.Priority, maxLeft->Item.Priority);
+
+            // // Chamar recursivamente Retira para remover o nó com a chave originalmente procurada
+            // return Retira(&(*pNo)->Esq, c, counter_comparisons);
+
+            // If key is at root and both left and right are not NULL
+            if ((*pNo)->Esq->Item.Priority < (*pNo)->Dir->Item.Priority ){
+                RotacaoEsquerda(pNo);
+                return Retira(&(*pNo)->Esq, c, counter_comparisons);
             }
             else {
-                RR(p, counter_comparisons);
-                return Retira(&(*p)->Esq, c, counter_comparisons);
+                RotacaoDireita(pNo);
+                return Retira(&(*pNo)->Dir, c, counter_comparisons);
             }
+    // else if (root->left->priority < root->right->priority)
+    // {
+    //     root = leftRotate(root);
+    //     root->left = deleteNode(root->left, key);
+    // }
+    // else
+    // {
+    //     root = rightRotate(root);
+    //     root->right = deleteNode(root->right, key);
+    // }
+ 
+    // return root;
         }
     }
 }
 
-// int main() {
-
-//     auto arvore = (TArvBin) malloc(sizeof(TNo));
-
-//     Treap treap;
-
-//     int comparisons = 0;
-//     TItem item1 = {10, rand()};
-//     TItem item2 = {20, rand()};
-//     TItem item3 = {5, rand()};
-
-//     treap.Insere(&arvore, item1, &comparisons);
-//     treap.Insere(&arvore, item2, &comparisons);
-//     treap.Insere(&arvore, item3, &comparisons);
-
-    // TArvBin found = treap.Pesquisa(&arvore, 10, &comparisons);
-    // if (found) {
-    //     std::cout << "Found key: " << found->Item.Chave << std::endl;
-    // } else {
-    //     std::cout << "Key not found" << std::endl;
-    // }
-
-    // treap.Retira(&arvore, 10, &comparisons);
-
-    // found = treap.Pesquisa(&arvore, 10, &comparisons);
-    // if (found) {
-    //     std::cout << "Found key: " << found->Item.Chave << std::endl;
-    // } else {
-    //     std::cout << "Key not found" << std::endl;
-    // }
-
-//     return 0;
+// // Função para imprimir a Treap
+// void Treap::printTreeRec(TArvBin node, int depth) const {
+//     if (node == NULL) {
+//         return;
+//     }
+//     printTreeRec(node->Dir, depth + 1);
+//     for (int i = 0; i < depth; ++i) {
+//         std::cout << "    ";
+//     }
+//     std::cout << "(" << node->Item.Chave << ", " << node->Item.Priority << ")" << std::endl;
+//     printTreeRec(node->Esq, depth + 1);
 // }
+
+// void Treap::printTree(TArvBin arvore) const {
+//     printTreeRec(arvore, 0);
+// }
+
+// Função para imprimir a Treap de forma hierárquica
+void Treap::printTreeRec(TArvBin node, int depth, std::string prefix, bool isLeft) const {
+    if (node == NULL) {
+        return;
+    }
+
+    // Imprime o nó atual com a devida indentação
+    std::cout << prefix;
+    if (isLeft) {
+        std::cout << "Filho à esquerda: ";
+    } else {
+        std::cout << "Filho à direita: ";
+    }
+    std::cout << "(" << node->Item.Chave << ", " << node->Item.Priority << ")" << std::endl;
+
+    // Chamadas recursivas para os filhos à esquerda e à direita
+    printTreeRec(node->Esq, depth + 1, prefix + "        ", true);
+    printTreeRec(node->Dir, depth + 1, prefix + "        ", false);
+}
+
+// Função wrapper para imprimir a Treap
+void Treap::printTree(TArvBin arvore) const {
+    std::cout << "Nó raiz: (" << arvore->Item.Chave << ", " << arvore->Item.Priority << ")" << std::endl;
+    printTreeRec(arvore->Esq, 1, "    ", true);
+    printTreeRec(arvore->Dir, 1, "    ", false);
+}
+
+
+// Funções de teste (implementação padrão, ajuste conforme necessário)
+std::variant<TDicionario*, TArvBin> Treap::testInsere(std::vector<int> dataset, int *counter_comparisons) {
+    TArvBin arvore = NULL;
+    int sum = 0;
+
+    for (int i = 0; i < dataset.size(); ++i) {
+        TItem item;
+        item.Chave = dataset[i];
+        item.Priority = rand() % dataset.size(); // Prioridade aleatória
+
+        int counter_comparisons_insertion = 0;
+        Insere(&arvore, item, &counter_comparisons_insertion);
+        sum += counter_comparisons_insertion;
+    }
+
+    (*counter_comparisons) = sum / dataset.size();
+    return arvore;
+}
+
+std::variant<TDicionario*, TArvBin> Treap::testPesquisa(std::variant<TDicionario*, TArvBin> dicionario, std::vector<int> dataset, int *counter_comparisons) {
+    if (std::holds_alternative<TArvBin>(dicionario)) {
+        TArvBin dic_ptr = std::get<TArvBin>(dicionario);
+        if (dic_ptr == NULL) {
+            return dicionario;
+        }
+
+        int sum = 0;
+        for (int i = 0; i < dataset.size(); ++i) {
+            int counter_comparisons_pesquisa = 0;
+            TChave chave = dataset[i];
+            Pesquisa(&dic_ptr, chave, &counter_comparisons_pesquisa);
+            sum += counter_comparisons_pesquisa;
+        }
+
+        (*counter_comparisons) = sum / dataset.size();
+    }
+    return dicionario;
+}
+
+std::variant<TDicionario*, TArvBin> Treap::testRetira(std::variant<TDicionario*, TArvBin> dicionario, std::vector<int> dataset, int *counter_comparisons) {
+    if (std::holds_alternative<TArvBin>(dicionario)) {
+        TArvBin dic_ptr = std::get<TArvBin>(dicionario);
+        int sum = 0;
+
+        for (int i = 0; i < dataset.size(); ++i) {
+            int counter_comparisons_retira = 0;
+            TChave chave = dataset[i];
+            Retira(&dic_ptr, chave, &counter_comparisons_retira);
+            sum += counter_comparisons_retira;
+        }
+
+        (*counter_comparisons) = sum / dataset.size();
+    }
+    return dicionario;
+}
