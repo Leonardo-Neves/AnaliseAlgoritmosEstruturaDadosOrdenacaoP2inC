@@ -116,6 +116,7 @@ int main() {
 
     std::cout << "4" << std::endl;
 
+    AVLTree aVLTree;
     // std::ofstream file("redBlackTree.csv");
 
     // file << "Algorithm;DatasetName;DatasetSize;Time Insere;Counter Comparisons Insere;Time Pesquisa;Counter Comparisons Pesquisa;Time Retira;Counter Comparisons Retira\n";
@@ -135,19 +136,19 @@ int main() {
                     std::cout << "5 " << function->first << std::endl;
                     int counter_comparisons_insere = 0;
                     // std::clock_t start = std::clock();
-                    auto result_testInsere = function->second->testInsere(datasets[i][j], &counter_comparisons_insere);
+                    auto result_testInsere = aVLTree.testInsere(datasets[i][j], &counter_comparisons_insere);
                     // std::clock_t end = std::clock();
                     // long double diff_insertion = 1000.0 * (end - start) / CLOCKS_PER_SEC;
                     std::cout << "6" << std::endl;
                     int counter_comparisons_pesquisa = 0;
                     // start = std::clock();
-                    auto result_testPesquisa = function->second->testPesquisa(result_testInsere, datasets[i][j], &counter_comparisons_pesquisa);
+                    auto result_testPesquisa = aVLTree.testPesquisa(result_testInsere, datasets[i][j], &counter_comparisons_pesquisa);
                     // end = std::clock();
                     // long double diff_pesquisa = 1000.0 * (end - start) / CLOCKS_PER_SEC;
                     std::cout << "7" << std::endl;
                     int counter_comparisons_retira = 0;
                     // start = std::clock();
-                    auto result_testRetira = function->second->testRetira(result_testInsere, datasets[i][j], &counter_comparisons_retira);
+                    auto result_testRetira = aVLTree.testRetira(result_testInsere, datasets[i][j], &counter_comparisons_retira);
                     // end = std::clock();
                     // long double diff_retira = 1000.0 * (end - start) / CLOCKS_PER_SEC;
                     std::cout << "8" << std::endl;

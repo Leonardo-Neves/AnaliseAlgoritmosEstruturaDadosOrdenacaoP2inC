@@ -389,7 +389,7 @@ TArvBin* RedBlackTree::Pesquisa(TArvBin *No, TChave c, int *counter_comparisons)
 }
 
 std::variant<TDicionario*, TArvBin> RedBlackTree::testInsere(std::vector<int> dataset, int *counter_comparisons) {
-    
+
     auto arvore = (TArvBin) malloc(dataset.size() * sizeof(TNo));
     int sum = 0;
     

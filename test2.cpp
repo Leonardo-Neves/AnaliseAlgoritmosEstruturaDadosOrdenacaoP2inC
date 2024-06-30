@@ -26,11 +26,13 @@ int main() {
 
     DatasetGenerator datasetGenerator;
 
-    AVLTree redBlackTree;
+    RedBlackTree redBlackTree;
     
     int counter = 0;
 
-    auto dataset = datasetGenerator.generateOrdered(1000000);
+    int dataset_size = 100;
+
+    auto dataset = datasetGenerator.generateOrdered(dataset_size);
     std::cout << "generateOrdered" << std::endl;
     std::cout << "1" << std::endl;
     auto result = redBlackTree.testInsere(dataset, &counter);
@@ -39,7 +41,7 @@ int main() {
     std::cout << "3" << std::endl;
     redBlackTree.testRetira(result, dataset, &counter);
 
-    auto dataset2 = datasetGenerator.generateOrderedInverse(1000000);
+    auto dataset2 = datasetGenerator.generateOrderedInverse(dataset_size);
     std::cout << "generateOrderedInverse" << std::endl;
     std::cout << "1" << std::endl;
     auto result2 = redBlackTree.testInsere(dataset2, &counter);
@@ -48,7 +50,7 @@ int main() {
     std::cout << "3" << std::endl;
     redBlackTree.testRetira(result2, dataset2, &counter);
 
-    auto dataset3 = datasetGenerator.generateAlmostOrdered(1000000);
+    auto dataset3 = datasetGenerator.generateAlmostOrdered(dataset_size);
     std::cout << "generateAlmostOrdered" << std::endl;
     std::cout << "1" << std::endl;
     auto result3 = redBlackTree.testInsere(dataset3, &counter);
@@ -57,7 +59,7 @@ int main() {
     std::cout << "3" << std::endl;
     redBlackTree.testRetira(result3, dataset3, &counter);
 
-    auto dataset4 = datasetGenerator.generateRandom(1000000);
+    auto dataset4 = datasetGenerator.generateRandom(dataset_size);
     std::cout << "generateRandom" << std::endl;
     std::cout << "1" << std::endl;
     auto result4 = redBlackTree.testInsere(dataset4, &counter);
