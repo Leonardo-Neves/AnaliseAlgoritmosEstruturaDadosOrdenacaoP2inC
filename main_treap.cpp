@@ -58,11 +58,16 @@ int main() {
     std::srand(std::time(0)); // Inicializa o gerador de números aleatórios
 
     // Inserir alguns nós
-    std::vector<int> keys = {5, 2, 8, 6, 3, 7, 1, 4};
+    std::vector<int> keys = {1, 2, 3, 4, 5, 6,7};
     for (int key : keys) {
         TItem item;
         item.Chave = key;
+        
+        
         item.Priority = rand() % 100; // Prioridade aleatória
+        if (key == 1) {
+            item.Priority = 100;
+        }
         treap.Insere(&arvore, item, &counter_comparisons); // Inserção na Treap
         std::cout << "Elemento " << key << " inserido com " << counter_comparisons << " comparações." << std::endl;
         treap.printTree(arvore); // Imprime a árvore após cada inserção

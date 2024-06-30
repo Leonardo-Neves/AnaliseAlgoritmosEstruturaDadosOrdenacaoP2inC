@@ -12,60 +12,109 @@
 #include <thread>
 #include <atomic>
 #include <iomanip>
-#include <exception>
 
-#include "AVLTree.h"
+#include "searchAlgorithm.h"
+
+#include "linearSearch.h"
 #include "binarySearch.h"
 #include "binarySearchTree.h"
-#include "linearSearch.h"
+#include "AVLTree.h"
 #include "redBlackTree.h"
-#include "treapTree.h"
+
 #include "datasetGenerator.h"
+
+using namespace std;
+#include "treapTree.h"
 
 int main() {
 
     DatasetGenerator datasetGenerator;
 
-    Treap treap;
-    
-    int counter = 0;
+    // std::vector<int> tamanhos = {10, 100, 1000};
+    std::vector<int> tamanhos = {10, 100, 1000, 10000, 100000, 1000000};
+    std::vector<std::vector<int>> datasets;
+    for (int tam : tamanhos) {
+        int counter = 0; // Reset the counter for each tree size
+        datasets.clear(); // Limpa o vetor de datasets para o próximo tamanho
+        datasets.push_back(datasetGenerator.generateOrdered(tam));
+        datasets.push_back(datasetGenerator.generateOrderedInverse(tam));
+        datasets.push_back(datasetGenerator.generateAlmostOrdered(tam));
+        datasets.push_back(datasetGenerator.generateRandom(tam));
 
-    auto dataset = datasetGenerator.generateOrdered(1000000);
-    std::cout << "generateOrdered" << std::endl;
-    std::cout << "1" << std::endl;
-    auto result = treap.testInsere(dataset, &counter);
-    std::cout << "2" << std::endl;
-    treap.testPesquisa(result, dataset, &counter);
-    std::cout << "3" << std::endl;
-    treap.testRetira(result, dataset, &counter);
+        for (auto dataset: datasets) {
+        
+            std::cout << "Treap" << std::endl;
+            {
+                counter = 0; // Reset the counter for each tree size
+                Treap treap;
+                // std::cout << "1" << std::endl;
+                auto result = treap.testInsere(dataset, &counter);
+                // std::cout << "2" << std::endl;
+                treap.testPesquisa(result, dataset, &counter);
+                // std::cout << "3" << std::endl;
+                treap.testRetira(result, dataset, &counter);
+            }
 
-    auto dataset2 = datasetGenerator.generateOrderedInverse(1000000);
-    std::cout << "generateOrderedInverse" << std::endl;
-    std::cout << "1" << std::endl;
-    auto result2 = treap.testInsere(dataset2, &counter);
-    std::cout << "2" << std::endl;
-    treap.testPesquisa(result2, dataset2, &counter);
-    std::cout << "3" << std::endl;
-    treap.testRetira(result2, dataset2, &counter);
+            std::cout << "AVLTree" << std::endl;
+            {
+                counter = 0; // Reset the counter for each tree size
+                AVLTree avl;
+                // std::cout << "1" << std::endl;
+                auto result = avl.testInsere(dataset, &counter);
+                // std::cout << "2" << std::endl;
+                avl.testPesquisa(result, dataset, &counter);
+                // std::cout << "3" << std::endl;
+                avl.testRetira(result, dataset, &counter);
+            }
 
-    auto dataset3 = datasetGenerator.generateAlmostOrdered(1000000);
-    std::cout << "generateAlmostOrdered" << std::endl;
-    std::cout << "1" << std::endl;
-    auto result3 = treap.testInsere(dataset3, &counter);
-    std::cout << "2" << std::endl;
-    treap.testPesquisa(result3, dataset3, &counter);
-    std::cout << "3" << std::endl;
-    treap.testRetira(result3, dataset3, &counter);
+            std::cout << "RedBlackTree" << std::endl;
+            {
+                counter = 0; // Reset the counter for each tree size
+                RedBlackTree redBlack;
+                std::cout << "1" << std::endl;
+                auto result = redBlack.testInsere(dataset, &counter);
+                std::cout << "2" << std::endl;
+                redBlack.testPesquisa(result, dataset, &counter);
+                std::cout << "3" << std::endl;
+                redBlack.testRetira(result, dataset, &counter);
+            }
 
-    auto dataset4 = datasetGenerator.generateRandom(1000000);
-    std::cout << "generateRandom" << std::endl;
-    std::cout << "1" << std::endl;
-    auto result4 = treap.testInsere(dataset4, &counter);
-    std::cout << "2" << std::endl;
-    treap.testPesquisa(result4, dataset4, &counter);
-    std::cout << "3" << std::endl;
-    treap.testRetira(result4, dataset4, &counter);
+            std::cout << "LinearSearch" << std::endl;
+            {
+                counter = 0; // Reset the counter for each tree size
+                LinearSearch linear;
+                // std::cout << "1" << std::endl;
+                auto result = linear.testInsere(dataset, &counter);
+                // std::cout << "2" << std::endl;
+                linear.testPesquisa(result, dataset, &counter);
+                // std::cout << "3" << std::endl;
+                linear.testRetira(result, dataset, &counter);
+            }
 
+            std::cout << "BinarySearch" << std::endl;
+            {
+                counter = 0; // Reset the counter for each tree size
+                BinarySearch binarySearch;
+                // std::cout << "1" << std::endl;
+                auto result = binarySearch.testInsere(dataset, &counter);
+                // std::cout << "2" << std::endl;
+                binarySearch.testPesquisa(result, dataset, &counter);
+                // std::cout << "3" << std::endl;
+                binarySearch.testRetira(result, dataset, &counter);
+            }
+
+            std::cout << "BinarySearchTree" << std::endl;
+            {
+                BinarySearchTree binarySearchTree;
+                // std::cout << "1" << std::endl;
+                auto result = binarySearchTree.testInsere(dataset, &counter);
+                // std::cout << "2" << std::endl;
+                binarySearchTree.testPesquisa(result, dataset, &counter);
+                // std::cout << "3" << std::endl;
+                binarySearchTree.testRetira(result, dataset, &counter);
+            }
+        }
+    }
 
     return 0;
 }
