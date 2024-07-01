@@ -244,7 +244,9 @@ void RedBlackTree::InsereRecursivo(TArvBin *pA, TArvBin *pC, TItem x, int *count
         (*counter_comparisons) ++;
 
         *pA = (TArvBin) malloc(sizeof(TNo));
-        (*pA)->Item = x; (*pA)->Esq = NULL; (*pA)->Dir = NULL;
+        (*pA)->Item = x; 
+        (*pA)->Esq = NULL;
+        (*pA)->Dir = NULL;
         (*pA)->cor = 1;
         
     }
@@ -388,11 +390,31 @@ TArvBin* RedBlackTree::Pesquisa(TArvBin *No, TChave c, int *counter_comparisons)
         
 }
 
-std::variant<TDicionario*, TArvBin> RedBlackTree::testInsere(std::vector<int> dataset, int *counter_comparisons) {
-
-    auto arvore = (TArvBin) malloc(dataset.size() * sizeof(TNo));
-    int sum = 0;
+// std::variant<TDicionario*, TArvBin> RedBlackTree::testInsere(std::vector<int> dataset, int *counter_comparisons) {
     
+//     auto arvore = (TArvBin) malloc(dataset.size() * sizeof(TNo));
+//     int sum = 0;
+    
+//     for (int i = 0; i < dataset.size(); ++i) {
+//         TItem item;
+//         item.Chave = dataset[i];
+
+//         int counter_comparisons_insertion = 0;
+        
+//         Insere(&arvore, item, &counter_comparisons_insertion);
+        
+//         sum += counter_comparisons_insertion;
+//     }
+
+//     (*counter_comparisons) = sum / dataset.size();
+
+//     return arvore;
+// }
+
+std::variant<TDicionario*, TArvBin> RedBlackTree::testInsere(std::vector<int> dataset, int *counter_comparisons) {
+    TArvBin arvore = NULL;
+    int sum = 0;
+
     for (int i = 0; i < dataset.size(); ++i) {
         TItem item;
         item.Chave = dataset[i];
@@ -406,6 +428,7 @@ std::variant<TDicionario*, TArvBin> RedBlackTree::testInsere(std::vector<int> da
 
     (*counter_comparisons) = sum / dataset.size();
 
+    // Retornar arvore como um ponteiro de tipo TArvBin para evitar cópia desnecessária
     return arvore;
 }
 
