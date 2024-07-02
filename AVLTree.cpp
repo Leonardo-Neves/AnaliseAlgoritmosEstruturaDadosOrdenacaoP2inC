@@ -365,7 +365,9 @@ TArvBin* AVLTree::Pesquisa(TArvBin *No, TChave c, int *counter_comparisons)
 
 std::variant<TDicionario*, TArvBin> AVLTree::testInsere(std::vector<int> dataset, int *counter_comparisons) {
 
-    auto arvore = (TArvBin) malloc(sizeof(TNo));
+    // auto arvore = (TArvBin) malloc(sizeof(TNo));
+    // auto arvore = (TArvBin) NULL;
+    TArvBin arvore = NULL;
 
     int sum = 0;
 
