@@ -20,11 +20,13 @@
 #include "binarySearchTree.h"
 #include "AVLTree.h"
 #include "redBlackTree.h"
+#include "treapTree.h"
 
 #include "datasetGenerator.h"
 
 using namespace std;
-#include "treapTree.h"
+
+std::mutex mtx;
 
 void runExperiment(SearchAlgorithm* algorithm, std::string algorithms_name, std::vector<int> dataset, std::string dataset_name, std::ofstream& file, int interation) {
 
@@ -50,6 +52,7 @@ void runExperiment(SearchAlgorithm* algorithm, std::string algorithms_name, std:
     long double diff_retira = 1000.0 * (end - start) / CLOCKS_PER_SEC;
 
     {
+        std::lock_guard<std::mutex> lock(mtx);
         file << interation << ";" << algorithms_name << ";" << dataset_name << ";" << dataset.size() << ";" << diff_insertion << ";" << counter_comparisons_insere<< ";" << diff_pesquisa << ";" << counter_comparisons_pesquisa<< ";" << diff_retira << ";" << counter_comparisons_retira << "\n";
     }
 }
