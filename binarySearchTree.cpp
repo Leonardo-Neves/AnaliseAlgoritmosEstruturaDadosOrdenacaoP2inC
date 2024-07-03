@@ -185,9 +185,6 @@ std::variant<TDicionario*, TArvBin> BinarySearchTree::testInsere(std::vector<int
         sum += counter_comparisons_insertion;
     }
 
-    std::cout << "sum" << sum << std::endl;
-    std::cout << "dataset.size()" << dataset.size() << std::endl;
-
     (*counter_comparisons) = sum / dataset.size();
 
     return dicionario;
