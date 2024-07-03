@@ -393,7 +393,7 @@ TArvBin* RedBlackTree::Pesquisa(TArvBin *No, TChave c, int *counter_comparisons)
 // std::variant<TDicionario*, TArvBin> RedBlackTree::testInsere(std::vector<int> dataset, int *counter_comparisons) {
     
 //     auto arvore = (TArvBin) malloc(dataset.size() * sizeof(TNo));
-//     int sum = 0;
+//     long long sum = 0;
     
 //     for (int i = 0; i < dataset.size(); ++i) {
 //         TItem item;
@@ -413,7 +413,7 @@ TArvBin* RedBlackTree::Pesquisa(TArvBin *No, TChave c, int *counter_comparisons)
 
 std::variant<TDicionario*, TArvBin> RedBlackTree::testInsere(std::vector<int> dataset, int *counter_comparisons) {
     TArvBin arvore = NULL;
-    int sum = 0;
+    long long sum = 0;
 
     for (int i = 0; i < dataset.size(); ++i) {
         TItem item;
@@ -442,7 +442,7 @@ std::variant<TDicionario*, TArvBin> RedBlackTree::testPesquisa(std::variant<TDic
             return dicionario;
         }
 
-        int sum = 0;
+        long long sum = 0;
 
         for (int i = 0; i < dataset.size(); ++i) {
 
@@ -472,7 +472,7 @@ std::variant<TDicionario*, TArvBin> RedBlackTree::testRetira(std::variant<TDicio
             return dicionario;
         }
 
-        int sum = 0;
+        long long sum = 0;
 
         for (int i = 0; i < dataset.size(); ++i) {
 

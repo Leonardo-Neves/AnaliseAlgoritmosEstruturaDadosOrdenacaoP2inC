@@ -367,7 +367,7 @@ std::variant<TDicionario*, TArvBin> AVLTree::testInsere(std::vector<int> dataset
 
     TArvBin arvore = NULL;
     
-    int sum = 0;
+    long long sum = 0;
 
     for (int i = 0; i < dataset.size(); ++i) {
         
@@ -396,7 +396,7 @@ std::variant<TDicionario*, TArvBin> AVLTree::testPesquisa(std::variant<TDicionar
             return dicionario;
         }
 
-        int sum = 0;
+        long long sum = 0;
 
         for (int i = 0; i < dataset.size(); ++i) {
 
@@ -422,7 +422,7 @@ std::variant<TDicionario*, TArvBin> AVLTree::testRetira(std::variant<TDicionario
 
         TArvBin dic_ptr = std::get<TArvBin>(dicionario);
 
-        int sum = 0;
+        long long sum = 0;
 
         for (int i = 0; i < dataset.size(); ++i) {
 

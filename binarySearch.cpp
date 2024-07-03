@@ -107,7 +107,7 @@ std::variant<TDicionario*, TArvBin> BinarySearch::testInsere(std::vector<int> da
 
     auto dicionario = TDicionario_Inicia(dataset.size(), counter_comparisons);
 
-    int sum = 0;
+    long long sum = 0;
 
     for (int i = 0; i < dataset.size(); ++i) {
 
@@ -131,7 +131,7 @@ std::variant<TDicionario*, TArvBin> BinarySearch::testPesquisa(std::variant<TDic
     if (std::holds_alternative<TDicionario*>(dicionario)) {
         TDicionario* dic_ptr = std::get<TDicionario*>(dicionario);
 
-        int sum = 0;
+        long long sum = 0;
 
         for (int i = 0; i < dataset.size(); ++i) {
 
@@ -155,7 +155,7 @@ std::variant<TDicionario*, TArvBin> BinarySearch::testRetira(std::variant<TDicio
 
         TDicionario* dic_ptr = std::get<TDicionario*>(dicionario);
 
-        int sum = 0;
+        long long sum = 0;
 
         for (int i = 0; i < dataset.size(); ++i) {
 

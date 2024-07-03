@@ -227,7 +227,7 @@ void Treap::printTree(TArvBin arvore) const {
 // Funções de teste (implementação padrão, ajuste conforme necessário)
 std::variant<TDicionario*, TArvBin> Treap::testInsere(std::vector<int> dataset, int *counter_comparisons) {
     TArvBin arvore = NULL;
-    int sum = 0;
+    long long sum = 0;
 
     for (int i = 0; i < dataset.size(); ++i) {
         TItem item;
@@ -250,7 +250,7 @@ std::variant<TDicionario*, TArvBin> Treap::testPesquisa(std::variant<TDicionario
             return dicionario;
         }
 
-        int sum = 0;
+        long long sum = 0;
         for (int i = 0; i < dataset.size(); ++i) {
             int counter_comparisons_pesquisa = 0;
             TChave chave = dataset[i];
@@ -266,7 +266,7 @@ std::variant<TDicionario*, TArvBin> Treap::testPesquisa(std::variant<TDicionario
 std::variant<TDicionario*, TArvBin> Treap::testRetira(std::variant<TDicionario*, TArvBin> dicionario, std::vector<int> dataset, int *counter_comparisons) {
     if (std::holds_alternative<TArvBin>(dicionario)) {
         TArvBin dic_ptr = std::get<TArvBin>(dicionario);
-        int sum = 0;
+        long long sum = 0;
 
         for (int i = 0; i < dataset.size(); ++i) {
             int counter_comparisons_retira = 0;

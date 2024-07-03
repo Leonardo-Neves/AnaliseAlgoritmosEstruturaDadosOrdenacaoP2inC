@@ -147,7 +147,7 @@ void BinarySearchTree::TDicionario_Pesquisa(TDicionario *D, TChave c, int *count
 
 int BinarySearchTree::TDicionario_Insere(TDicionario *D, TItem x, int *counter_comparisons)
 {
-    (*counter_comparisons) ++;
+    (*counter_comparisons)++;
     if (!Insere(&D->Raiz, x, counter_comparisons)) {
         return 0;
     }
@@ -171,7 +171,7 @@ std::variant<TDicionario*, TArvBin> BinarySearchTree::testInsere(std::vector<int
 
     auto dicionario = TDicionario_Inicia(counter_comparisons);
 
-    int sum = 0;
+    long long sum = 0;
 
     for (int i = 0; i < dataset.size(); ++i) {
 
@@ -185,6 +185,9 @@ std::variant<TDicionario*, TArvBin> BinarySearchTree::testInsere(std::vector<int
         sum += counter_comparisons_insertion;
     }
 
+    std::cout << "sum" << sum << std::endl;
+    std::cout << "dataset.size()" << dataset.size() << std::endl;
+
     (*counter_comparisons) = sum / dataset.size();
 
     return dicionario;
@@ -195,7 +198,7 @@ std::variant<TDicionario*, TArvBin> BinarySearchTree::testPesquisa(std::variant<
     if (std::holds_alternative<TDicionario*>(dicionario)) {
         TDicionario* dic_ptr = std::get<TDicionario*>(dicionario);
 
-        int sum = 0;
+        long long sum = 0;
 
         for (int i = 0; i < dataset.size(); ++i) {
 
@@ -219,7 +222,7 @@ std::variant<TDicionario*, TArvBin> BinarySearchTree::testRetira(std::variant<TD
 
         TDicionario* dic_ptr = std::get<TDicionario*>(dicionario);
 
-        int sum = 0;
+        long long sum = 0;
 
         for (int i = 0; i < dataset.size(); ++i) {
 
