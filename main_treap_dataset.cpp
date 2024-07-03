@@ -50,7 +50,7 @@ int main() {
         "LinearSearch"
     };
 
-    for (int j = 0; j < datasets.size(); ++j) {
+    for (int j = 0; j < NUMBER_INTERATIONS; ++j) {
 
         std::ofstream file(std::to_string(j) + ".csv");
 

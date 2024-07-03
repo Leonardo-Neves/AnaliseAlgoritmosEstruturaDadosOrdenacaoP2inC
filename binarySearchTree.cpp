@@ -25,13 +25,18 @@ TArvBin BinarySearchTree::Pesquisa(TArvBin Raiz, TChave c, int *counter_comparis
     TArvBin No;
     No = Raiz;
     while ((No != NULL) && (c != No->Item.Chave)) {
-        if (c < No->Item.Chave)
+        (*counter_comparisons) ++;
+
+        if (c < No->Item.Chave) {
+            (*counter_comparisons) ++;
             No = No->Esq;
-        else if (c > No->Item.Chave)
+        }
+        else if (c > No->Item.Chave) {
+            (*counter_comparisons) += 2;
             No = No->Dir;
+        }
     }
     return No;
-
 }
 
 // int BinarySearchTree::Insere(TArvBin *pNo, TItem x, int *counter_comparisons)
@@ -68,12 +73,19 @@ int BinarySearchTree::Insere(TArvBin *pRaiz, TItem x, int *counter_comparisons)
     pNo = pRaiz;
 
     while ((*pNo != NULL) && (x.Chave != (*pNo)->Item.Chave)) {
-        if (x.Chave < (*pNo)->Item.Chave)
+        (*counter_comparisons) ++;
+
+        if (x.Chave < (*pNo)->Item.Chave) {
+            (*counter_comparisons) ++;
             pNo = &(*pNo)->Esq;
-        else if (x.Chave > (*pNo)->Item.Chave)
+        }
+        else if (x.Chave > (*pNo)->Item.Chave) {
+            (*counter_comparisons) += 2;
             pNo = &(*pNo)->Dir;
+        }
     }
 
+    (*counter_comparisons) ++;
     if (*pNo == NULL) {
         *pNo = (TArvBin) malloc(sizeof(TNo));
         (*pNo)->Item = x;
@@ -114,19 +126,36 @@ int BinarySearchTree::Retira(TArvBin *pRaiz, TChave c, int *counter_comparisons)
     TArvBin *p, q;
     p = pRaiz;
     while ((*p != NULL) && (c != (*p)->Item.Chave)) {
-        if (c < (*p)->Item.Chave)
+        (*counter_comparisons)++;
+
+        if (c < (*p)->Item.Chave) {
+            (*counter_comparisons)++;
+
             p = &(*p)->Esq;
-        else if (c > (*p)->Item.Chave)
+        }
+        else if (c > (*p)->Item.Chave) {
+            (*counter_comparisons) += 2;
+
             p = &(*p)->Dir;
+        }
+            
     }
+
+    (*counter_comparisons)++;
     if (*p != NULL) {
         q = *p;
-        if (q->Esq == NULL)
+        if (q->Esq == NULL) {
+            (*counter_comparisons)++;
             *p = q->Dir;
-        else if (q->Dir == NULL)
+        }
+        else if (q->Dir == NULL) {
+            (*counter_comparisons) += 2;
             *p = q->Esq;
-        else
+        }
+        else {
+            (*counter_comparisons) += 2;
             Sucessor(&q, &q->Dir, counter_comparisons);
+        }
         free(q);
         return 1;
     }
