@@ -28,9 +28,7 @@ using namespace std;
 
 void runExperiment(SearchAlgorithm* algorithm, std::string algorithms_name, std::vector<int> dataset, std::string dataset_name, std::ofstream& file, int interation) {
 
-    int counter_comparisons_insere = 0; // Reset the counter for each tree size
-    Treap treap;
-    
+    int counter_comparisons_insere = 0;
     std::clock_t start = std::clock();
     auto result = algorithm->testInsere(dataset, &counter_comparisons_insere);
     std::clock_t end = std::clock();
