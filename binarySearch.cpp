@@ -24,7 +24,6 @@ TApontador BinarySearch::TDicionario_Binaria(TDicionario *D, TApontador esq, TAp
     TApontador meio;
     meio = (esq + dir) / 2;
 
-    
     if (esq > dir) {
         (*counter_comparisons) ++;
         return NIL;
@@ -37,8 +36,12 @@ TApontador BinarySearch::TDicionario_Binaria(TDicionario *D, TApontador esq, TAp
         (*counter_comparisons) += 3;
         return TDicionario_Binaria(D, esq, meio-1, c, counter_comparisons);
     }
-    else
+    else {
+        (*counter_comparisons) += 3;
+
         return meio;
+    }
+        
 }
 
 TApontador BinarySearch::TDicionario_Pesquisa(TDicionario *D, TChave c, int *counter_comparisons)
@@ -51,8 +54,9 @@ int BinarySearch::TDicionario_Insere(TDicionario *D, TItem x, int *counter_compa
     TApontador i;
 
     (*counter_comparisons) ++;
-    if (TDicionario_Pesquisa(D, x.Chave, counter_comparisons) != NIL)
+    if (TDicionario_Pesquisa(D, x.Chave, counter_comparisons) != NIL) {
         return 0;
+    }
 
     (*counter_comparisons) ++;
     if (D->n == D->max) {
@@ -61,7 +65,6 @@ int BinarySearch::TDicionario_Insere(TDicionario *D, TItem x, int *counter_compa
     }
 
     i = D->n - 1;
-
     while ((i >= 0) && (x.Chave < D->Item[i].Chave)) {
         (*counter_comparisons) ++;
 
@@ -81,8 +84,9 @@ int BinarySearch::TDicionario_Retira(TDicionario *D, TChave c, int *counter_comp
     i = TDicionario_Pesquisa(D, c, counter_comparisons);
 
     (*counter_comparisons) ++;
-    if (i == NIL)
+    if (i == NIL) {
         return 0;
+    }
 
     while (i < D->n - 1) {
         (*counter_comparisons) ++;
@@ -98,23 +102,6 @@ int BinarySearch::TDicionario_Retira(TDicionario *D, TChave c, int *counter_comp
     }
     return 1;
 }
-
-// void main() {
-//     int n = 10;
-
-//     auto dicionario = TDicionario_Inicia(n);
-
-//     DatasetGenerator datasetGenerator;
-
-//     std::vector<int> dataset = datasetGenerator.generateOrderedInverse(n);
-
-//     for (int i = 0; i < n; ++i) {
-//         TItem item;
-//         item.Chave = dataset[i];
-
-//         TDicionario_Insere(dicionario, item);
-//     }
-// }
 
 std::variant<TDicionario*, TArvBin> BinarySearch::testInsere(std::vector<int> dataset, int *counter_comparisons) {
 

@@ -9,7 +9,7 @@ public:
 
     typedef TArvBin TApontador;
 
-    TDicionario *TDicionario_Inicia(int n, int *counter_comparisons);
+    TDicionario *TDicionario_Inicia(int *counter_comparisons);
     TArvBin Pesquisa(TArvBin No, TChave c, int *counter_comparisons);
     int Insere(TArvBin *pNo, TItem x, int *counter_comparisons);
     void Predecessor(TArvBin *q, TArvBin *r, int *counter_comparisons);

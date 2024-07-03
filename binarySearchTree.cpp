@@ -11,10 +11,10 @@
 
 BinarySearchTree::BinarySearchTree() {}
 
-TDicionario *BinarySearchTree::TDicionario_Inicia(int n, int *counter_comparisons)
+TDicionario *BinarySearchTree::TDicionario_Inicia(int *counter_comparisons)
 {
     TDicionario *D;
-    D = (TDicionario *) malloc(n * sizeof(TDicionario));
+    D = (TDicionario *) malloc(sizeof(TDicionario));
     D->n = 0;
     D->Raiz = NULL;
     return D;
@@ -38,34 +38,6 @@ TArvBin BinarySearchTree::Pesquisa(TArvBin Raiz, TChave c, int *counter_comparis
     }
     return No;
 }
-
-// int BinarySearchTree::Insere(TArvBin *pNo, TItem x, int *counter_comparisons)
-// {
-//     if (*pNo == NULL) {
-//         (*counter_comparisons) ++;
-
-//         *pNo = (TArvBin) malloc(sizeof(TNo));
-//         (*pNo)->Item = x;
-//         (*pNo)->Esq = NULL;
-//         (*pNo)->Dir = NULL;
-//         return 1;
-//     }
-//     else if (x.Chave < (*pNo)->Item.Chave) {
-//         (*counter_comparisons) += 2;
-
-//         return Insere(&(*pNo)->Esq, x, counter_comparisons);
-//     }
-//     else if (x.Chave > (*pNo)->Item.Chave) {
-//         (*counter_comparisons) += 3;
-
-//         return Insere(&(*pNo)->Dir, x, counter_comparisons);
-//     }
-//     else {
-//         (*counter_comparisons) += 3;
-
-//         return 0;
-//     }
-// }
 
 int BinarySearchTree::Insere(TArvBin *pRaiz, TItem x, int *counter_comparisons)
 {
@@ -99,10 +71,14 @@ int BinarySearchTree::Insere(TArvBin *pRaiz, TItem x, int *counter_comparisons)
 
 void BinarySearchTree::Predecessor(TArvBin *q, TArvBin *r, int *counter_comparisons)
 {   
-    (*counter_comparisons) ++;
-    if ((*r)->Dir != NULL)
+    
+    if ((*r)->Dir != NULL) {
+        (*counter_comparisons) ++;
         Predecessor(q, &(*r)->Dir, counter_comparisons);
+    }
     else {
+        (*counter_comparisons) ++;
+
         (*q)->Item = (*r)->Item;
         *q = *r;
         *r = (*r)->Esq;
@@ -111,10 +87,13 @@ void BinarySearchTree::Predecessor(TArvBin *q, TArvBin *r, int *counter_comparis
 
 void BinarySearchTree::Sucessor(TArvBin *q, TArvBin *r, int *counter_comparisons)
 {   
-    (*counter_comparisons) ++;
-    if ((*r)->Esq != NULL)
+    
+    if ((*r)->Esq != NULL) {
+        (*counter_comparisons) ++;
         Sucessor(q, &(*r)->Esq, counter_comparisons);
+    }
     else {
+        (*counter_comparisons) ++;
         (*q)->Item = (*r)->Item;
         *q = *r;
         *r = (*r)->Dir;
@@ -138,7 +117,6 @@ int BinarySearchTree::Retira(TArvBin *pRaiz, TChave c, int *counter_comparisons)
 
             p = &(*p)->Dir;
         }
-            
     }
 
     (*counter_comparisons)++;
@@ -170,8 +148,10 @@ void BinarySearchTree::TDicionario_Pesquisa(TDicionario *D, TChave c, int *count
 int BinarySearchTree::TDicionario_Insere(TDicionario *D, TItem x, int *counter_comparisons)
 {
     (*counter_comparisons) ++;
-    if (!Insere(&D->Raiz, x, counter_comparisons))
+    if (!Insere(&D->Raiz, x, counter_comparisons)) {
         return 0;
+    }
+
     D->n++;
     return 1;
 }
@@ -179,38 +159,17 @@ int BinarySearchTree::TDicionario_Insere(TDicionario *D, TItem x, int *counter_c
 int BinarySearchTree::TDicionario_Retira(TDicionario *D, TChave c, int *counter_comparisons)
 {   
     (*counter_comparisons) ++;
-    if (!Retira(&D->Raiz, c, counter_comparisons))
+    if (!Retira(&D->Raiz, c, counter_comparisons)) {
         return 0;
+    }
+        
     D->n--;
     return 1;
 }
 
-// int main() {
-//     int n = 10;
-
-//     auto dicionario = TDicionario_Inicia(n);
-
-//     DatasetGenerator datasetGenerator;
-
-//     std::vector<int> dataset = datasetGenerator.generateOrderedInverse(n);
-
-//     for (int i = 0; i < n; ++i) {
-//         TItem item;
-//         item.Chave = dataset[i];
-
-//         TDicionario_Insere(dicionario, item);
-//     }
-
-//     TChave chave = 8;
-
-//     std::cout << TDicionario_Pesquisa(dicionario, chave) << " ";
-
-//     return 0;
-// }
-
 std::variant<TDicionario*, TArvBin> BinarySearchTree::testInsere(std::vector<int> dataset, int *counter_comparisons) {
 
-    auto dicionario = TDicionario_Inicia(dataset.size(), counter_comparisons);
+    auto dicionario = TDicionario_Inicia(counter_comparisons);
 
     int sum = 0;
 
