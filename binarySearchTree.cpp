@@ -11,66 +11,85 @@
 
 BinarySearchTree::BinarySearchTree() {}
 
-TDicionario *BinarySearchTree::TDicionario_Inicia(int *counter_comparisons)
+TDicionario *BinarySearchTree::TDicionario_Inicia(int n, int *counter_comparisons)
 {
     TDicionario *D;
-    D = (TDicionario *) malloc(sizeof(TDicionario));
+    D = (TDicionario *) malloc(n * sizeof(TDicionario));
     D->n = 0;
     D->Raiz = NULL;
     return D;
 }
 
-TArvBin BinarySearchTree::Pesquisa(TArvBin No, TChave c, int *counter_comparisons)
+TArvBin BinarySearchTree::Pesquisa(TArvBin Raiz, TChave c, int *counter_comparisons)
 {
-    if (No == NULL) {
-        (*counter_comparisons) ++;
+    TArvBin No;
+    No = Raiz;
 
-        return NULL;
-    }
-    else if (c < No->Item.Chave) {
-        (*counter_comparisons) += 2;
+    (*counter_comparisons)++;
+    while ((No != NULL) && (c != No->Item.Chave)) {
 
-        return Pesquisa(No->Esq, c, counter_comparisons);
+        (*counter_comparisons)++;
+        if (c < No->Item.Chave)
+            No = No->Esq;
+        else if (c > No->Item.Chave)
+            No = No->Dir;
     }
-    else if (c > No->Item.Chave) {
-        (*counter_comparisons) += 3;
+    return No;
 
-        return Pesquisa(No->Dir, c, counter_comparisons);
-    }
-    else {
-        (*counter_comparisons) += 3;
-
-        return No;
-    }
-        
 }
 
-int BinarySearchTree::Insere(TArvBin *pNo, TItem x, int *counter_comparisons)
-{
-    if (*pNo == NULL) {
-        (*counter_comparisons) ++;
+// int BinarySearchTree::Insere(TArvBin *pNo, TItem x, int *counter_comparisons)
+// {
+//     if (*pNo == NULL) {
+//         (*counter_comparisons) ++;
 
+//         *pNo = (TArvBin) malloc(sizeof(TNo));
+//         (*pNo)->Item = x;
+//         (*pNo)->Esq = NULL;
+//         (*pNo)->Dir = NULL;
+//         return 1;
+//     }
+//     else if (x.Chave < (*pNo)->Item.Chave) {
+//         (*counter_comparisons) += 2;
+
+//         return Insere(&(*pNo)->Esq, x, counter_comparisons);
+//     }
+//     else if (x.Chave > (*pNo)->Item.Chave) {
+//         (*counter_comparisons) += 3;
+
+//         return Insere(&(*pNo)->Dir, x, counter_comparisons);
+//     }
+//     else {
+//         (*counter_comparisons) += 3;
+
+//         return 0;
+//     }
+// }
+
+int BinarySearchTree::Insere(TArvBin *pRaiz, TItem x, int *counter_comparisons)
+{
+    TArvBin *pNo;
+    pNo = pRaiz;
+
+    (*counter_comparisons)++;
+    while ((*pNo != NULL) && (x.Chave != (*pNo)->Item.Chave)) {
+        (*counter_comparisons)++;
+        if (x.Chave < (*pNo)->Item.Chave)
+            pNo = &(*pNo)->Esq;
+        else if (x.Chave > (*pNo)->Item.Chave)
+            pNo = &(*pNo)->Dir;
+    }
+
+    (*counter_comparisons)++;
+    if (*pNo == NULL) {
         *pNo = (TArvBin) malloc(sizeof(TNo));
         (*pNo)->Item = x;
         (*pNo)->Esq = NULL;
         (*pNo)->Dir = NULL;
         return 1;
     }
-    else if (x.Chave < (*pNo)->Item.Chave) {
-        (*counter_comparisons) += 2;
 
-        return Insere(&(*pNo)->Esq, x, counter_comparisons);
-    }
-    else if (x.Chave > (*pNo)->Item.Chave) {
-        (*counter_comparisons) += 3;
-
-        return Insere(&(*pNo)->Dir, x, counter_comparisons);
-    }
-    else {
-        (*counter_comparisons) += 3;
-
-        return 0;
-    }
+    return 0;
 }
 
 void BinarySearchTree::Predecessor(TArvBin *q, TArvBin *r, int *counter_comparisons)
@@ -97,41 +116,35 @@ void BinarySearchTree::Sucessor(TArvBin *q, TArvBin *r, int *counter_comparisons
     }
 }
 
-int BinarySearchTree::Retira(TArvBin *p, TChave c, int *counter_comparisons)
+int BinarySearchTree::Retira(TArvBin *pRaiz, TChave c, int *counter_comparisons)
 {
-    TArvBin q;
-    if (*p == NULL) {
-        (*counter_comparisons) ++;
-        return 0;
-    }
-    else if (c < (*p)->Item.Chave) {
-        (*counter_comparisons) += 2;
-        return Retira(&(*p)->Esq, c, counter_comparisons);
-    }
-    else if (c > (*p)->Item.Chave) {
-        (*counter_comparisons) += 3;
-        return Retira(&(*p)->Dir, c, counter_comparisons);
-    }
-    else {
-        (*counter_comparisons) += 3;
+    TArvBin *p, q;
+    p = pRaiz;
 
+    (*counter_comparisons)++;
+    while ((*p != NULL) && (c != (*p)->Item.Chave)) {
+
+        (*counter_comparisons)++;
+        if (c < (*p)->Item.Chave)
+            p = &(*p)->Esq;
+        else if (c > (*p)->Item.Chave)
+            p = &(*p)->Dir;
+    }
+
+    (*counter_comparisons)++;
+    if (*p != NULL) {
         q = *p;
-        if (q->Esq == NULL) {
-            (*counter_comparisons) ++;
+        (*counter_comparisons)++;
+        if (q->Esq == NULL)
             *p = q->Dir;
-        }
-        else if (q->Dir == NULL) {
-            (*counter_comparisons) += 2;
+        else if (q->Dir == NULL)
             *p = q->Esq;
-        }
-        else  {
-            (*counter_comparisons) += 2;
-
+        else
             Sucessor(&q, &q->Dir, counter_comparisons);
-        }
         free(q);
         return 1;
     }
+    return 0;
 }
 
 void BinarySearchTree::TDicionario_Pesquisa(TDicionario *D, TChave c, int *counter_comparisons)
@@ -141,7 +154,7 @@ void BinarySearchTree::TDicionario_Pesquisa(TDicionario *D, TChave c, int *count
 
 int BinarySearchTree::TDicionario_Insere(TDicionario *D, TItem x, int *counter_comparisons)
 {
-    (*counter_comparisons) ++;
+    (*counter_comparisons)++;
     if (!Insere(&D->Raiz, x, counter_comparisons))
         return 0;
     D->n++;
@@ -150,7 +163,7 @@ int BinarySearchTree::TDicionario_Insere(TDicionario *D, TItem x, int *counter_c
 
 int BinarySearchTree::TDicionario_Retira(TDicionario *D, TChave c, int *counter_comparisons)
 {   
-    (*counter_comparisons) ++;
+    (*counter_comparisons)++;
     if (!Retira(&D->Raiz, c, counter_comparisons))
         return 0;
     D->n--;
@@ -182,7 +195,7 @@ int BinarySearchTree::TDicionario_Retira(TDicionario *D, TChave c, int *counter_
 
 std::variant<TDicionario*, TArvBin> BinarySearchTree::testInsere(std::vector<int> dataset, int *counter_comparisons) {
 
-    auto dicionario = TDicionario_Inicia(counter_comparisons);
+    auto dicionario = TDicionario_Inicia(dataset.size(), counter_comparisons);
 
     int sum = 0;
 
