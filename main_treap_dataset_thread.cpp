@@ -52,10 +52,7 @@ void runExperiment(SearchAlgorithm* algorithm, std::string algorithms_name, std:
     long double diff_retira = 1000.0 * (end - start) / CLOCKS_PER_SEC;
 
     {
-        file << interation << ";" << algorithms_name << ";" << dataset_name << ";" 
-            << dataset.size() << ";" << diff_insertion << ";" << counter_comparisons_insere<< ";" 
-            << diff_pesquisa << ";" << counter_comparisons_pesquisa<< ";" 
-            << diff_retira << ";" << counter_comparisons_retira<< ";" << "\n";
+        file << interation << ";" << algorithms_name << ";" << dataset_name << ";" << dataset.size() << ";" << diff_insertion << ";" << counter_comparisons_insere<< ";" << diff_pesquisa << ";" << counter_comparisons_pesquisa<< ";" << diff_retira << ";" << counter_comparisons_retira << "\n";
     }
 }
 
