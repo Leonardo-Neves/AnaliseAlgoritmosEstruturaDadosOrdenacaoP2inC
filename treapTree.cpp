@@ -25,6 +25,8 @@ void Treap::RotacaoEsquerda(TArvBin *pA) {
 // Função para inserir um novo nó na Treap
 int Treap::Insere(TArvBin *pNo, TItem x, int *counter_comparisons) {
     if (*pNo == NULL) {
+        (*counter_comparisons)++;
+
         *pNo = new SNo();
         (*pNo)->Item = x;
         (*pNo)->Esq = NULL;
@@ -32,13 +34,23 @@ int Treap::Insere(TArvBin *pNo, TItem x, int *counter_comparisons) {
         return 1;
     } else {
         (*counter_comparisons)++;
+
+
         if (x.Chave < (*pNo)->Item.Chave) {
+            (*counter_comparisons)++;
+
             Insere(&(*pNo)->Esq, x, counter_comparisons);
+
+            (*counter_comparisons)++;
             if ((*pNo)->Esq->Item.Priority > (*pNo)->Item.Priority) {
                 RotacaoDireita(pNo);
             }
         } else {
+            (*counter_comparisons)++;
+
             Insere(&(*pNo)->Dir, x, counter_comparisons);
+
+            (*counter_comparisons)++;
             if ((*pNo)->Dir->Item.Priority > (*pNo)->Item.Priority) {
                 RotacaoEsquerda(pNo);
             }
@@ -49,16 +61,19 @@ int Treap::Insere(TArvBin *pNo, TItem x, int *counter_comparisons) {
 
 // Função para pesquisar um nó na Treap
 TArvBin* Treap::Pesquisa(TArvBin *pNo, TChave c, int *counter_comparisons) {
+    (*counter_comparisons)++;
     if (*pNo == NULL) {
         return NULL;
     }
 
-    (*counter_comparisons)++;
     if (c < (*pNo)->Item.Chave) {
+        (*counter_comparisons)++;
         return Pesquisa(&(*pNo)->Esq, c, counter_comparisons);
     } else if (c > (*pNo)->Item.Chave) {
+        (*counter_comparisons)+=2;
         return Pesquisa(&(*pNo)->Dir, c, counter_comparisons);
     } else {
+        (*counter_comparisons)+=2;
         return pNo;
     }
 }
@@ -108,20 +123,28 @@ TArvBin* Treap::Pesquisa(TArvBin *pNo, TChave c, int *counter_comparisons) {
 // }
 // Função para remover um nó da Treap
 int Treap::Retira(TArvBin *pNo, TChave c, int *counter_comparisons) {
+
+    (*counter_comparisons)++;
     if (*pNo == NULL) {
         return 0; // Nó não encontrado
     }
 
-    (*counter_comparisons)++;
+    
     if (c < (*pNo)->Item.Chave) {
+        (*counter_comparisons)++;
         return Retira(&(*pNo)->Esq, c, counter_comparisons);
     } else if (c > (*pNo)->Item.Chave) {
+        (*counter_comparisons)+= 2;
         return Retira(&(*pNo)->Dir, c, counter_comparisons);
     } else {
+        (*counter_comparisons)+= 2;
+
         // Nó encontrado para remoção
 
         // Caso 1: Nó é uma folha (sem filhos)
         if ((*pNo)->Esq == NULL && (*pNo)->Dir == NULL) {
+            (*counter_comparisons)++;
+
             TArvBin temp = *pNo;
             *pNo = NULL;
             delete temp;
@@ -129,11 +152,15 @@ int Treap::Retira(TArvBin *pNo, TChave c, int *counter_comparisons) {
         }
         // Caso 2: Nó tem apenas um filho
         else if ((*pNo)->Esq == NULL) {
+            (*counter_comparisons) += 2;
+
             TArvBin temp = *pNo;
             *pNo = (*pNo)->Dir;
             delete temp;
             return 1;
         } else if ((*pNo)->Dir == NULL) {
+            (*counter_comparisons) += 3;
+
             TArvBin temp = *pNo;
             *pNo = (*pNo)->Esq;
             delete temp;
@@ -141,6 +168,8 @@ int Treap::Retira(TArvBin *pNo, TChave c, int *counter_comparisons) {
         }
         // Caso 3: Nó tem dois filhos
         else {
+            (*counter_comparisons) += 3;
+
             // // Encontrar o nó com a maior prioridade na subárvore esquerda
             // TArvBin maxLeft = (*pNo)->Esq;
             // while (maxLeft->Dir != NULL) {
@@ -154,12 +183,17 @@ int Treap::Retira(TArvBin *pNo, TChave c, int *counter_comparisons) {
             // // Chamar recursivamente Retira para remover o nó com a chave originalmente procurada
             // return Retira(&(*pNo)->Esq, c, counter_comparisons);
 
+            
             // If key is at root and both left and right are not NULL
             if ((*pNo)->Esq->Item.Priority < (*pNo)->Dir->Item.Priority ){
+                (*counter_comparisons)++;
+
                 RotacaoEsquerda(pNo);
                 return Retira(&(*pNo)->Esq, c, counter_comparisons);
             }
             else {
+                (*counter_comparisons)++;
+                
                 RotacaoDireita(pNo);
                 return Retira(&(*pNo)->Dir, c, counter_comparisons);
             }
