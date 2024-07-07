@@ -266,7 +266,7 @@ std::variant<TDicionario*, TArvBin> Treap::testInsere(std::vector<int> dataset, 
     for (int i = 0; i < dataset.size(); ++i) {
         TItem item;
         item.Chave = dataset[i];
-        item.Priority = rand() % dataset.size(); // Prioridade aleatória
+        item.Priority = rand() % (2 * dataset.size()); // Prioridade aleatória
 
         int counter_comparisons_insertion = 0;
         Insere(&arvore, item, &counter_comparisons_insertion);
