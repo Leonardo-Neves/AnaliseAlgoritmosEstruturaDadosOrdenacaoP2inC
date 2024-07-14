@@ -12,102 +12,78 @@
 #include <thread>
 #include <atomic>
 #include <iomanip>
-#include <exception>
 
-#include "AVLTree.h"
+#include "searchAlgorithm.h"
+
+#include "linearSearch.h"
 #include "binarySearch.h"
 #include "binarySearchTree.h"
-#include "linearSearch.h"
+#include "AVLTree.h"
 #include "redBlackTree.h"
 #include "treapTree.h"
 
 #include "datasetGenerator.h"
 
-#include "ProgressBar.hpp"
+using namespace std;
 
-std::vector<std::vector<std::vector<int>>> generateDataset(std::vector<int> lengthLists) {
+std::mutex mtx;
 
-    /*
-        Exemplo de vetor de saída
-        [
-            [   Ordered
-                [0 ... 10],
-                [0 ... 100],
-                [0 ... 1000],
-                [0 ... 10000]
-            ],
-            [   OrderedInverse
-                [0 ... 10],
-                [0 ... 100],
-                [0 ... 1000],
-                [0 ... 10000]
-            ],
-            [   AlmostOrdered
-                [0 ... 10],
-                [0 ... 100],
-                [0 ... 1000],
-                [0 ... 10000]
-            ],
-            [   Random
-                [0 ... 10],
-                [0 ... 100],
-                [0 ... 1000],
-                [0 ... 10000]
-            ],
-        ]
-    */
+void runExperiment(SearchAlgorithm* algorithm, std::string algorithms_name, std::vector<int> dataset, std::string dataset_name, std::ofstream& file, int interation) {
 
-    // Criando uma instância do gerador de conjunto de dados
-    DatasetGenerator datasetGenerator;
+    int counter_comparisons_insere = 0;
+    std::clock_t start = std::clock();
+    auto result = algorithm->testInsere(dataset, &counter_comparisons_insere);
+    std::clock_t end = std::clock();
 
-    std::vector<std::vector<std::vector<int>>> datasets;
+    long double diff_insertion = 1000.0 * (end - start) / CLOCKS_PER_SEC;
 
-    // Gerando parte do conjunto de dados para dados ordenados
-    std::vector<std::vector<int>> datasets_temporary_ordered;
-    for (int i = 0; i < lengthLists.size(); ++i) {
-        datasets_temporary_ordered.push_back(datasetGenerator.generateOrdered(lengthLists[i]));
+    int counter_comparisons_pesquisa = 0;
+    start = std::clock();
+    algorithm->testPesquisa(result, dataset, &counter_comparisons_pesquisa);
+    end = std::clock();
+
+    long double diff_pesquisa = 1000.0 * (end - start) / CLOCKS_PER_SEC;
+
+    int counter_comparisons_retira = 0;
+    start = std::clock();
+    algorithm->testRetira(result, dataset, &counter_comparisons_retira);
+    end = std::clock();
+
+    long double diff_retira = 1000.0 * (end - start) / CLOCKS_PER_SEC;
+
+    {
+        std::lock_guard<std::mutex> lock(mtx);
+        file << interation << ";" << algorithms_name << ";" << dataset_name << ";" << dataset.size() << ";" << diff_insertion << ";" << counter_comparisons_insere<< ";" << diff_pesquisa << ";" << counter_comparisons_pesquisa<< ";" << diff_retira << ";" << counter_comparisons_retira << "\n";
     }
-    datasets.push_back(datasets_temporary_ordered);
-
-    // Gerando parte do conjunto de dados para dados ordenados inversamente
-    std::vector<std::vector<int>> datasets_temporary_ordered_inverse;
-    for (int i = 0; i < lengthLists.size(); ++i) {
-        datasets_temporary_ordered_inverse.push_back(datasetGenerator.generateOrderedInverse(lengthLists[i]));
-    }
-    datasets.push_back(datasets_temporary_ordered_inverse);
-
-    // Gerando parte do conjunto de dados para dados ordenados parcialmente
-    std::vector<std::vector<int>> datasets_temporary_almost_ordered;
-    for (int i = 0; i < lengthLists.size(); ++i) {
-        datasets_temporary_almost_ordered.push_back(datasetGenerator.generateAlmostOrdered(lengthLists[i]));
-    }
-    datasets.push_back(datasets_temporary_almost_ordered);
-
-    // Gerando parte do conjunto de dados para dados ordenados randômicamente
-    std::vector<std::vector<int>> datasets_temporary_random;
-    for (int i = 0; i < lengthLists.size(); ++i) {
-        datasets_temporary_random.push_back(datasetGenerator.generateRandom(lengthLists[i]));
-    }
-    datasets.push_back(datasets_temporary_random);
-
-    return datasets;
 }
 
 int main() {
 
-    std::string output_path = "/home/leo/AAED_P2/output";
+    DatasetGenerator datasetGenerator;
+    std::vector<int> tamanhos = {10, 100, 1000, 10000, 100000, 1000000};
+    std::vector<std::vector<int>> datasets;
 
-    std::vector<int> lengthLists = {10, 100, 1000, 10000, 100000, 1000000};
-    
+    int NUMBER_INTERATIONS = 10;
+
+    // Nome dos conjuntos de dados utilizados
     std::vector<std::string> datasets_name = {
         "Ordered",
         "OrderedInverse",
         "AlmostOrdered",
         "Random"
     };
-    
-    auto datasets = generateDataset(lengthLists);
-    
+
+    // Nome dos algoritmos
+    std::vector<std::string> algorithms = {
+        "TreapTree",
+        "AVLTree",
+        "RedBlackTree",
+        "BinarySearchTree",
+        "BinarySearch",
+        "LinearSearch"
+    };
+
+    // Criando um vetor com as instâncias de cada algoritmo
     std::map<std::string, SearchAlgorithm*> methods;
     methods["linearSearch"] = new LinearSearch();
     methods["binarySearch"] = new BinarySearch();
@@ -116,58 +92,44 @@ int main() {
     methods["redBlackTree"] = new RedBlackTree();
     methods["treapTree"] = new Treap();
 
-    std::ofstream file("output.csv");
+    for (int j = 0; j < NUMBER_INTERATIONS; ++j) {
 
-    file << "Algorithm;DatasetName;DatasetSize;Time Insere;Counter Comparisons Insere;Time Pesquisa;Counter Comparisons Pesquisa;Time Retira;Counter Comparisons Retira\n";
+        // Arquivo para o salvamento do resultado dos experimentos desta interação
+        std::ofstream file(std::to_string(j) + ".csv");
 
-    int total_iterations = methods.size() * datasets.size() * datasets[0].size();
-    ProgressBar progress(total_iterations);
-    
-    if (file.is_open()) {
+        file << "Interation;Algorithm;DatasetName;DatasetSize;Time Insere;Counter Comparisons Insere;Time Pesquisa;Counter Comparisons Pesquisa;Time Retira;Counter Comparisons Retira\n";
 
-        for (auto function = methods.begin(); function != methods.end(); ++function) {
-        
-            for (int i = 0; i < datasets.size(); ++i) {
+        if (file.is_open()) {
 
-                for (int j = 0; j < datasets[i].size(); ++j) {
-                    
-                    try {
-                        std::cout << function->first << " " << datasets[i][j].size() << std::endl;
-                        int counter_comparisons_insere = 0;
-                        std::clock_t start = std::clock();
-                        auto result_testInsere = function->second->testInsere(datasets[i][j], &counter_comparisons_insere);
-                        std::clock_t end = std::clock();
-                        long double diff_insertion = 1000.0 * (end - start) / CLOCKS_PER_SEC;
-                        
-                        int counter_comparisons_pesquisa = 0;
-                        start = std::clock();
-                        auto result_testPesquisa = function->second->testPesquisa(result_testInsere, datasets[i][j], &counter_comparisons_pesquisa);
-                        end = std::clock();
-                        long double diff_pesquisa = 1000.0 * (end - start) / CLOCKS_PER_SEC;
-                        
-                        int counter_comparisons_retira = 0;
-                        start = std::clock();
-                        auto result_testRetira = function->second->testRetira(result_testInsere, datasets[i][j], &counter_comparisons_retira);
-                        end = std::clock();
-                        long double diff_retira = 1000.0 * (end - start) / CLOCKS_PER_SEC;
-                        
-                        {
-                            file << function->first << ";" << datasets_name[i] << ";" 
-                                << datasets[i][j].size() << ";" << diff_insertion << ";" << counter_comparisons_insere<< ";" 
-                                << diff_pesquisa << ";" << counter_comparisons_pesquisa<< ";" 
-                                << diff_retira << ";" << counter_comparisons_retira<< ";" << "\n";
-                        }
+            for (int tam : tamanhos) {
 
-                        progress.update();
-                    } catch (const std::exception& e) {
-                        std::cerr << e.what() << std::endl;
+                std::cout << "Tamanho: " << tam << std::endl;
+
+                int counter = 0;
+                datasets.clear();
+                datasets.push_back(datasetGenerator.generateOrdered(tam));
+                datasets.push_back(datasetGenerator.generateOrderedInverse(tam));
+                datasets.push_back(datasetGenerator.generateAlmostOrdered(tam));
+                datasets.push_back(datasetGenerator.generateRandom(tam));
+
+                // Criando threads para executar cada conjunto de dado em paralelo
+                std::vector<std::thread> threads;
+
+                for (int i = 0; i < datasets.size(); ++i) {
+                    for (auto function = methods.begin(); function != methods.end(); ++function) {
+                        threads.emplace_back(runExperiment, function->second, function->first, datasets[i], datasets_name[i], std::ref(file), j);
                     }
+                }
+
+                // Esperando a finalização de cada thread
+                for (long long i = 0; i < threads.size(); ++i) {
+                    threads[i].join();
                 }
             }
         }
-    }
 
-    file.close();
+        file.close();
+    }
 
     return 0;
 }
